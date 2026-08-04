@@ -48,6 +48,7 @@ const tray = $("#tray"), trayTroops = $("#trayTroops"), housingUsedEl = $("#hous
 const endBtn = $("#endBtn");
 const scoutEl = $("#scout");
 const infoEl = $("#info"), infoScroll = $("#infoScroll"), infoClose = $("#infoClose");
+const profileEl = $("#profile"), profileScroll = $("#profileScroll"), profileClose = $("#profileClose");
 const resultEl = $("#result"), resultStars = $("#resultStars"), resultTitle = $("#resultTitle"), resultSub = $("#resultSub");
 const rGold = $("#rGold"), rElixir = $("#rElixir"), rTrophies = $("#rTrophies"), rDamage = $("#rDamage"), resultHint = $("#resultHint");
 const raidAgain = $("#raidAgain"), resultAlly = $("#resultAlly");
@@ -2205,8 +2206,58 @@ function renderCampInfo() {
 }
 infoClose.addEventListener("click", () => infoEl.classList.remove("on"));
 
+/* ═════════════ FULL PROFILE — the entire résumé, zero gameplay required ═════════════ */
+function buildProfile() {
+  const job = (c) => `
+    <div class="p-job">
+      <div class="p-job-head">
+        <div class="p-job-title">${c.title} <small>· ${c.role}</small></div>
+        <div class="p-job-date">${c.dates}</div>
+      </div>
+      <ul>${(c.list || []).map(li => `<li>${li}</li>`).join("")}</ul>
+    </div>`;
+  const skills = TROOP_DEFS.map(t => `
+    <span class="p-skill"><i style="background:${t.color}"></i>${t.skill}<small>LVL ${t.lvl}</small></span>`).join("");
+  profileScroll.innerHTML = `
+    <div class="p-head">
+      <div class="p-name">DIVY SINGHVI</div>
+      <div class="p-role">Product Engineer <b>@ Gradr</b> · Kubernetes Contributor</div>
+      <div class="p-meta">B.TECH ECE · CTAE UDAIPUR · 2023–2027</div>
+      <div class="p-links">
+        <a class="p-link gold" href="mailto:divysinghvi5@gmail.com">✉️ EMAIL</a>
+        <a class="p-link" href="https://github.com/divysinghvi" target="_blank" rel="noopener">🐙 GITHUB</a>
+        <a class="p-link" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">💼 LINKEDIN</a>
+        <a class="p-link" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener">📄 RESUME</a>
+      </div>
+    </div>
+    <div class="p-sect">EXPERIENCE</div>
+    ${job(CONTENT.beacon)}
+    ${job(CONTENT.xbow)}
+    ${job(CONTENT.archer)}
+    ${job(CONTENT.cannon)}
+    <div class="p-sect">PROJECTS</div>
+    ${job(CONTENT.gold)}
+    ${job(CONTENT.elixir)}
+    <div class="p-sect">ACHIEVEMENTS</div>
+    <div class="p-job"><ul>${CONTENT.th.list.map(li => `<li>${li}</li>`).join("")}</ul></div>
+    <div class="p-sect">SKILLS — THE ARMY</div>
+    <div class="p-skills">${skills}</div>
+    <div class="p-note">Happily shipping at Gradr — not job-hunting. Open-source collabs, side quests and genuinely hard problems: gates open. ⚔️ And yes — you can raid all of this. Close the panel and tap the grass.</div>
+  `;
+}
+function openProfile() {
+  if (!profileScroll.querySelector(".p-head")) buildProfile();
+  profileEl.classList.add("on");
+  profileEl.setAttribute("aria-hidden", "false");
+}
+$("#profileBtn").addEventListener("click", openProfile);
+$("#scoutProfile").addEventListener("click", (e) => { e.stopPropagation(); openProfile(); });
+$("#resultProfile").addEventListener("click", openProfile);
+profileClose.addEventListener("click", () => profileEl.classList.remove("on"));
+
 function closeAllPanels() {
   infoEl.classList.remove("on"); warlogEl.classList.remove("on"); resultEl.classList.remove("on");
+  profileEl.classList.remove("on");
 }
 
 /* ═════════════════════════════ PHASE MACHINE ═════════════════════════════ */

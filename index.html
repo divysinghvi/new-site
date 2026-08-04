@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Divy Singhvi — Three Stars (Raid the Base)</title>
-<meta name="description" content="A real-time raid on Divy Singhvi's base. Deploy the army, three-star the village, loot the engineer. Built in a browser, no assets, no mercy.">
+<title>Divy Singhvi — Product Engineer · Raid My Base</title>
+<meta name="description" content="Divy Singhvi — product engineer at Gradr, Kubernetes (Minikube) contributor, builder of a 5,000-user Chrome extension. His portfolio is a playable village: read the profile in one click, or raid the base and loot it.">
 <meta name="theme-color" content="#10173A">
-<meta property="og:title" content="Divy Singhvi — Three Stars">
-<meta property="og:description" content="Strong walls. Stronger Wi-Fi. Now it's your raid.">
+<meta property="og:title" content="Divy Singhvi — Product Engineer · Raid My Base">
+<meta property="og:description" content="Product engineer @ Gradr · Kubernetes contributor · TH15 chief. Read the profile — or three-star it.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z' fill='%2310173A' stroke='%23FFC53D' stroke-width='6'/%3E%3Ctext x='50' y='63' font-size='38' font-family='Arial Black' font-weight='900' fill='%23FFC53D' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@400;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -54,6 +54,7 @@
     </div>
     <div class="hud-damage mono"><span id="damagePct">0</span>%</div>
     <div class="hud-gems mono" id="hudGems" title="Gems earned">💎 <span id="gemCount">0</span></div>
+    <button class="hud-btn hud-btn-profile" id="profileBtn" title="Full profile — the résumé, no raiding required" aria-label="Full profile">📜<span class="hud-btn-label">PROFILE</span></button>
     <button class="hud-btn" id="soundBtn" title="Toggle sound" aria-label="Toggle sound"><span id="soundIcon">♪</span></button>
     <button class="hud-btn" id="logBtn" title="War log" aria-label="War log">☰</button>
     <button class="hud-btn hud-btn-ally" id="allyBtn" title="Request alliance" aria-label="Request alliance">⚔</button>
@@ -75,14 +76,25 @@
   <button class="tray-end" id="endBtn" title="End raid early">END RAID</button>
 </div>
 
-<!-- ══════════════ SCOUT BANNER / INTRO ══════════════ -->
+<!-- ══════════════ SCOUT BANNER / CHIEF PROFILE CARD ══════════════ -->
 <div class="scout" id="scout" aria-hidden="true">
   <div class="scout-inner">
     <p class="scout-kicker mono">A VILLAGE APPEARS ON THE MAP</p>
-    <h1 class="scout-title">THREE STARS</h1>
-    <p class="scout-sub">Divy Singhvi keeps a base. <b>Town Hall 15 · Level 189.</b> Almost maxed.</p>
-    <p class="scout-line">You are the attacker now. Deploy the army. Destroy the Town Hall for the third star.<br>The loot inside every building is the engineer himself.</p>
-    <div class="scout-cta" id="scoutCta"><span class="pulse"></span> TAP A TROOP · TAP THE GRASS TO DEPLOY</div>
+    <h1 class="scout-title">DIVY SINGHVI</h1>
+    <p class="scout-role">Product Engineer <b>@ Gradr</b> &ensp;·&ensp; Kubernetes Contributor &ensp;·&ensp; TH15 Chief</p>
+    <div class="scout-chips">
+      <span class="chip">🐙 Minikube — upstream commits</span>
+      <span class="chip">🧩 5,000+ users on his Chrome extension</span>
+      <span class="chip">🏆 #98 worldwide · WorldQuant IQC</span>
+    </div>
+    <p class="scout-line">This base is his portfolio. <b>Read it in one click — or raid it and loot the intel yourself.</b></p>
+    <div class="scout-actions">
+      <button class="scout-btn scout-btn-profile" id="scoutProfile">📜&ensp;FULL PROFILE — 60 SECONDS</button>
+      <div class="scout-cta" id="scoutCta"><span class="pulse"></span> OR RAID: TAP A TROOP · TAP THE GRASS</div>
+    </div>
+    <div class="scout-sublinks mono">
+      <a href="story/">🎬 story mode</a>&ensp;·&ensp;<a href="mailto:divysinghvi5@gmail.com">✉️ contact</a>&ensp;·&ensp;<a href="https://github.com/divysinghvi" target="_blank" rel="noopener">github</a>&ensp;·&ensp;<a href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">linkedin</a>
+    </div>
   </div>
 </div>
 
@@ -91,6 +103,22 @@
   <button class="info-close" id="infoClose" aria-label="Close">✕</button>
   <div class="info-scroll" id="infoScroll"><!-- injected --></div>
 </aside>
+
+<!-- ══════════════ FULL PROFILE (the whole résumé — zero gameplay required) ══════════════ -->
+<aside class="info profile" id="profile" aria-hidden="true">
+  <button class="info-close" id="profileClose" aria-label="Close">✕</button>
+  <div class="info-scroll" id="profileScroll"><!-- injected --></div>
+</aside>
+
+<noscript>
+  <div style="position:fixed;inset:0;z-index:200;background:#10173A;color:#EDF1FB;padding:8vh 8vw;font-family:sans-serif;overflow:auto">
+    <h1>Divy Singhvi — Product Engineer</h1>
+    <p>Product Engineer at Gradr (Sweden, remote) · Kubernetes contributor (Minikube) · B.Tech ECE, CTAE Udaipur 2023–2027.</p>
+    <p>Built a 5,000+ user price-comparison Chrome extension (FastAPI · Svelte · PostgreSQL) and self-healing microservice infrastructure (Docker · Kubernetes · Prometheus · Grafana). WorldQuant IQC — 2nd prize, #98 worldwide.</p>
+    <p>Email: divysinghvi5@gmail.com · <a style="color:#FFC53D" href="https://github.com/divysinghvi">GitHub</a> · <a style="color:#FFC53D" href="https://www.linkedin.com/in/divysinghvi/">LinkedIn</a></p>
+    <p>This site is normally a playable village raid — enable JavaScript for the full experience.</p>
+  </div>
+</noscript>
 
 <!-- ══════════════ BATTLE RESULT ══════════════ -->
 <div class="result" id="result" aria-hidden="true">
@@ -106,8 +134,9 @@
     </div>
     <div class="result-actions">
       <button class="r-btn r-primary" id="raidAgain">RAID AGAIN</button>
-      <button class="r-btn r-ally" id="resultAlly">REQUEST ALLIANCE</button>
+      <button class="r-btn r-ally" id="resultProfile">📜 FULL PROFILE</button>
       <button class="r-btn r-share" id="shareBtn">⚔ CHALLENGE A FRIEND</button>
+      <button class="r-btn r-ghost" id="resultAlly">REQUEST ALLIANCE</button>
     </div>
     <p class="result-hint mono" id="resultHint"></p>
   </div>
@@ -174,6 +203,6 @@
 <div class="cinem-cap" id="cinemCap" aria-hidden="true"></div>
 <button class="cinem-skip" id="cinemSkip" aria-label="Skip cinematic">SKIP&ensp;▸</button>
 
-<script src="game.js?v=6"></script>
+<script src="game.js?v=8"></script>
 </body>
 </html>
