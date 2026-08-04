@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@400;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -53,8 +53,8 @@
       <svg viewBox="0 0 60 58" class="hud-star" id="star3"><path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z" fill="url(#sg)" stroke="#9A6A0E" stroke-width="2.5"/></svg>
     </div>
     <div class="hud-damage mono"><span id="damagePct">0</span>%</div>
-    <div class="hud-gems mono" id="hudGems" title="Gems earned">💎 <span id="gemCount">0</span></div>
-    <button class="hud-btn hud-btn-profile" id="profileBtn" title="Full profile — the résumé, no raiding required" aria-label="Full profile">📜<span class="hud-btn-label">PROFILE</span></button>
+    <div class="hud-gems mono" id="hudGems" title="Gems earned"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M12 2l7 6-7 14L5 8z" fill="#59E4E0" stroke="#1E9C99" stroke-width="1.6" stroke-linejoin="round"/></svg> <span id="gemCount">0</span></div>
+    <button class="hud-btn hud-btn-profile" id="profileBtn" title="Full profile — the résumé, no raiding required" aria-label="Full profile"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#F4E7C3" stroke="#7A5000" stroke-width="1.8"/><path d="M8 9h8M8 12.5h8M8 16h5" stroke="#8A6A2E" stroke-width="1.5" stroke-linecap="round"/></svg><span class="hud-btn-label">PROFILE</span></button>
     <button class="hud-btn" id="soundBtn" title="Toggle sound" aria-label="Toggle sound"><span id="soundIcon">♪</span></button>
     <button class="hud-btn" id="logBtn" title="War log" aria-label="War log">☰</button>
     <button class="hud-btn hud-btn-ally" id="allyBtn" title="Request alliance" aria-label="Request alliance">⚔</button>
@@ -83,17 +83,17 @@
     <h1 class="scout-title">DIVY SINGHVI</h1>
     <p class="scout-role">Product Engineer <b>@ Gradr</b> &ensp;·&ensp; Kubernetes Contributor &ensp;·&ensp; TH15 Chief</p>
     <div class="scout-chips">
-      <span class="chip">🐙 Minikube — upstream commits</span>
-      <span class="chip">🧩 5,000+ users on his Chrome extension</span>
-      <span class="chip">🏆 #98 worldwide · WorldQuant IQC</span>
+      <span class="chip"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg> Minikube — upstream commits</span>
+      <span class="chip"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><circle cx="9" cy="8" r="3.4" fill="currentColor"/><circle cx="16.5" cy="9" r="2.7" fill="currentColor" opacity=".65"/><path d="M3 19c.6-3.4 3-5.2 6-5.2s5.4 1.8 6 5.2z" fill="currentColor"/><path d="M14.7 13.6c2.4.2 4.3 1.7 4.8 4.4h-3.4" fill="currentColor" opacity=".65"/></svg> 5,000+ extension users</span>
+      <span class="chip"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M7 3h10v2h4c0 4-2 6.5-4.6 7.2A6 6 0 0 1 13 15v3h3v3H8v-3h3v-3a6 6 0 0 1-3.4-2.8C5 11.5 3 9 3 5h4z" fill="currentColor"/></svg> #98 worldwide · WorldQuant IQC</span>
     </div>
-    <p class="scout-line">This base is his portfolio. <b>Read it in one click — or raid it and loot the intel yourself.</b></p>
+    <p class="scout-line">This base is his portfolio. <b>Read it — or raid it.</b></p>
     <div class="scout-actions">
-      <button class="scout-btn scout-btn-profile" id="scoutProfile">📜&ensp;FULL PROFILE — 60 SECONDS</button>
-      <div class="scout-cta" id="scoutCta"><span class="pulse"></span> OR RAID: TAP A TROOP · TAP THE GRASS</div>
+      <button class="scout-btn scout-btn-profile" id="scoutProfile">FULL PROFILE</button>
+      <div class="scout-cta" id="scoutCta"><span class="pulse"></span> RAID: PICK A TROOP · TAP THE GRASS</div>
     </div>
     <div class="scout-sublinks mono">
-      <a href="story/">🎬 story mode</a>&ensp;·&ensp;<a href="mailto:divysinghvi5@gmail.com">✉️ contact</a>&ensp;·&ensp;<a href="https://github.com/divysinghvi" target="_blank" rel="noopener">github</a>&ensp;·&ensp;<a href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">linkedin</a>
+      <a href="story/">story mode</a>&ensp;·&ensp;<a href="mailto:divysinghvi5@gmail.com">contact</a>&ensp;·&ensp;<a href="https://github.com/divysinghvi" target="_blank" rel="noopener">github</a>&ensp;·&ensp;<a href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">linkedin</a>
     </div>
   </div>
 </div>
@@ -129,13 +129,13 @@
     <div class="result-loot">
       <div class="rl"><i class="dot dot-gold"></i><span class="mono" id="rGold">0</span></div>
       <div class="rl"><i class="dot dot-elixir"></i><span class="mono" id="rElixir">0</span></div>
-      <div class="rl">🏆 <span class="mono" id="rTrophies">0</span></div>
-      <div class="rl">💥 <span class="mono" id="rDamage">0%</span></div>
+      <div class="rl"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M7 3h10v2h4c0 4-2 6.5-4.6 7.2A6 6 0 0 1 13 15v3h3v3H8v-3h3v-3a6 6 0 0 1-3.4-2.8C5 11.5 3 9 3 5h4z" fill="#FFC53D"/></svg> <span class="mono" id="rTrophies">0</span></div>
+      <div class="rl"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M12 1l1.8 6L19 4l-3 5.2 6 .8-5.4 3 3.4 5-6-1.8L12 23l-2-6.8L4 18l3.4-5L2 10l6-.8L5 4l5.2 3z" fill="#FF7A3D"/></svg> <span class="mono" id="rDamage">0%</span></div>
     </div>
     <div class="result-actions">
       <button class="r-btn r-primary" id="raidAgain">RAID AGAIN</button>
-      <button class="r-btn r-ally" id="resultProfile">📜 FULL PROFILE</button>
-      <button class="r-btn r-share" id="shareBtn">⚔ CHALLENGE A FRIEND</button>
+      <button class="r-btn r-ally" id="resultProfile">FULL PROFILE</button>
+      <button class="r-btn r-share" id="shareBtn">CHALLENGE A FRIEND</button>
       <button class="r-btn r-ghost" id="resultAlly">REQUEST ALLIANCE</button>
     </div>
     <p class="result-hint mono" id="resultHint"></p>
@@ -166,7 +166,7 @@
     <p class="al-kicker mono">REQUEST ALLIANCE</p>
     <h2 class="al-title">The builder already has a clan.</h2>
     <p class="al-sub">Happily shipping at Gradr — not looking for a new village. But open-source collabs, side quests, and genuinely hard problems? The gates are open. Replies faster than a rage-quit.</p>
-    <a class="al-cta" href="mailto:divysinghvi5@gmail.com">⚔&ensp;SEND RAID PLANS&ensp;→&ensp;divysinghvi5@gmail.com</a>
+    <a class="al-cta" href="mailto:divysinghvi5@gmail.com">SEND RAID PLANS&ensp;→&ensp;divysinghvi5@gmail.com</a>
 
     <div class="banner-row">
       <a class="banner" href="https://github.com/divysinghvi" target="_blank" rel="noopener">
@@ -184,9 +184,9 @@
     </div>
   </div>
   <footer class="footer">
-    <p style="margin-bottom:14px"><a class="story-link" href="story/">🎬 Prefer to watch? <b>Story Mode</b> — the original scroll-film version of this base</a></p>
-    <p>Built by Divy Singhvi — designed as one continuous raid, then made playable because a film you can only watch is a storyboard. No Supercell assets; this village is original fan-spirit art, drawn frame by frame on a canvas.</p>
-    <p class="footer-hint mono">P.S. real chiefs know the code: ↑ ↑ ↓ ↓ ← → ← → B A &ensp;·&ensp; type <b>hogrider</b>, <b>pekka</b>, <b>godmode</b>, <b>rage</b>, <b>freeze</b> &ensp;·&ensp; try <b>?auto</b> &ensp;·&ensp; triple-tap the Town Hall</p>
+    <p style="margin-bottom:14px"><a class="story-link" href="story/">Prefer to watch? <b>Story Mode</b> — the scroll-film version of this base</a></p>
+    <p>Built by Divy Singhvi. Original art, drawn line by line on a canvas — no game assets borrowed.</p>
+    <p class="footer-hint mono">real chiefs know: ↑↑↓↓←→←→BA · hogrider · pekka · rage · freeze · ?auto · triple-tap the Town Hall</p>
   </footer>
 </section>
 
@@ -203,6 +203,6 @@
 <div class="cinem-cap" id="cinemCap" aria-hidden="true"></div>
 <button class="cinem-skip" id="cinemSkip" aria-label="Skip cinematic">SKIP&ensp;▸</button>
 
-<script src="game.js?v=8"></script>
+<script src="game.js?v=10"></script>
 </body>
 </html>

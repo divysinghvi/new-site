@@ -174,7 +174,7 @@ const SECRET_TROOPS = {
 };
 
 /* ───────────────────── building definitions (layout + stats) ───────────────────── */
-const DEF_HP = { th:1500, cannon:800, archer:700, xbow:750, beacon:650, gold:600, elixir:600, hut:300, camp:450, tree:60, cc:700 };
+const DEF_HP = { th:1500, cannon:800, archer:700, xbow:750, beacon:650, gold:600, elixir:600, hut:300, camp:450, tree:60, cc:700, torch:50 };
 const DEF_DMG = { cannon:26, archer:20, xbow:16, beacon:9 };  // beacon ramps
 const VILLAGE_PLAN = [
   { id:"th",     type:"th",     gx:9,  gy:9,  w:4, h:4 },
@@ -187,10 +187,16 @@ const VILLAGE_PLAN = [
   { id:"cc",     type:"cc",     gx:10, gy:7,  w:2, h:2 },
   { id:"hut",    type:"hut",    gx:3,  gy:10, w:2, h:2 },
   { id:"camp",   type:"camp",   gx:17, gy:9,  w:3, h:3 },
-  { id:"tree1",  type:"tree",   gx:3,  gy:3,  w:1, h:1, decor:true },
-  { id:"tree2",  type:"tree",   gx:19, gy:3,  w:1, h:1, decor:true },
-  { id:"tree3",  type:"tree",   gx:3,  gy:19, w:1, h:1, decor:true },
-  { id:"tree4",  type:"tree",   gx:19, gy:19, w:1, h:1, decor:true },
+  { id:"tree1",  type:"tree",   gx:2,  gy:4,  w:1, h:1, decor:true },
+  { id:"tree2",  type:"tree",   gx:20, gy:2,  w:1, h:1, decor:true },
+  { id:"tree3",  type:"tree",   gx:4,  gy:20, w:1, h:1, decor:true },
+  { id:"tree4",  type:"tree",   gx:19, gy:18, w:1, h:1, decor:true },
+  { id:"tree5",  type:"tree",   gx:21, gy:9,  w:1, h:1, decor:true },
+  { id:"tree6",  type:"tree",   gx:1,  gy:14, w:1, h:1, decor:true },
+  { id:"torch1", type:"torch",  gx:5,  gy:5,  w:1, h:1, decor:true },
+  { id:"torch2", type:"torch",  gx:17, gy:5,  w:1, h:1, decor:true },
+  { id:"torch3", type:"torch",  gx:5,  gy:17, w:1, h:1, decor:true },
+  { id:"torch4", type:"torch",  gx:17, gy:17, w:1, h:1, decor:true },
 ];
 
 /* loot allocation across buildings (shares of the real gold/elixir totals) */
@@ -387,45 +393,73 @@ SPR.wallRubble = makeSprite(64, 36, (cx, w, h) => {
   [[14,22,3],[30,24,3],[44,22,2]].forEach(([x,y,r])=>{ cx.beginPath(); cx.arc(x,y,r,0,TAU); cx.fill(); });
 });
 
-/* ── town hall (TH15) ── */
+/* ── town hall (TH15) — drawn with real volume: lit front faces, shaded sides, shingles ── */
 SPR.th = makeSprite(150, 180, (cx, w, h) => {
-  shadow(cx, w / 2, h - 8, 58, 13);
-  // stone base
+  shadow(cx, w / 2, h - 8, 60, 13);
+  // stone base: front face + darker right side face (fake iso volume)
   const g = cx.createLinearGradient(0, 96, 0, 160);
-  g.addColorStop(0, "#B7C2D6"); g.addColorStop(1, "#6B7793");
+  g.addColorStop(0, "#C4CEE0"); g.addColorStop(1, "#75819D");
   cx.fillStyle = g; cx.strokeStyle = "#39435C"; cx.lineWidth = 3.5;
-  roundRect(cx, 20, 96, 110, 64, 10); cx.fill(); cx.stroke();
+  roundRect(cx, 18, 96, 114, 64, 9); cx.fill(); cx.stroke();
+  cx.fillStyle = "rgba(38,46,68,.28)";
+  roundRect(cx, 104, 96, 28, 64, 9); cx.fill();
+  // masonry seams
+  cx.strokeStyle = "rgba(57,67,92,.45)"; cx.lineWidth = 1.5;
+  for (let yy = 112; yy < 156; yy += 15) { cx.beginPath(); cx.moveTo(21, yy); cx.lineTo(129, yy); cx.stroke(); }
+  for (let xx = 40; xx < 130; xx += 22) { cx.beginPath(); cx.moveTo(xx, 99); cx.lineTo(xx, 111); cx.stroke(); }
+  // corner blocks
+  cx.fillStyle = "#8D99B4"; cx.strokeStyle = "#39435C"; cx.lineWidth = 2.5;
+  roundRect(cx, 14, 92, 16, 70, 5); cx.fill(); cx.stroke();
+  roundRect(cx, 120, 92, 16, 70, 5); cx.fill(); cx.stroke();
   // door
   cx.fillStyle = "#241340"; cx.strokeStyle = "#FFC53D"; cx.lineWidth = 3;
-  cx.beginPath(); cx.moveTo(64, 160); cx.lineTo(64, 132); cx.arc(75, 132, 11, Math.PI, 0); cx.lineTo(86, 160); cx.closePath(); cx.fill(); cx.stroke();
-  // windows
-  cx.fillStyle = "#9FE8FF"; cx.strokeStyle = "#2D57C8"; cx.lineWidth = 2;
-  roundRect(cx, 30, 110, 18, 14, 4); cx.fill(); cx.stroke();
-  roundRect(cx, 102, 110, 18, 14, 4); cx.fill(); cx.stroke();
-  // purple keep
-  const pg = cx.createLinearGradient(0, 64, 0, 100);
-  pg.addColorStop(0, "#8A63D2"); pg.addColorStop(1, "#5A34A0");
+  cx.beginPath(); cx.moveTo(63, 160); cx.lineTo(63, 132); cx.arc(75, 132, 12, Math.PI, 0); cx.lineTo(87, 160); cx.closePath(); cx.fill(); cx.stroke();
+  cx.strokeStyle = "rgba(255,197,61,.5)"; cx.lineWidth = 1.5;
+  cx.beginPath(); cx.moveTo(75, 122); cx.lineTo(75, 158); cx.stroke();
+  // glowing windows
+  const win = (wx) => {
+    const wg = cx.createRadialGradient(wx + 9, 117, 1, wx + 9, 117, 12);
+    wg.addColorStop(0, "#FFF3C4"); wg.addColorStop(1, "#E8B84B");
+    cx.fillStyle = wg; cx.strokeStyle = "#7A5000"; cx.lineWidth = 2.2;
+    roundRect(cx, wx, 110, 18, 14, 4); cx.fill(); cx.stroke();
+    cx.strokeStyle = "rgba(122,80,0,.6)"; cx.lineWidth = 1.2;
+    cx.beginPath(); cx.moveTo(wx + 9, 110); cx.lineTo(wx + 9, 124); cx.stroke();
+  };
+  win(32); win(100);
+  // purple keep with side shade + banner pair
+  const pg = cx.createLinearGradient(0, 62, 0, 100);
+  pg.addColorStop(0, "#9770DE"); pg.addColorStop(1, "#5A34A0");
   cx.fillStyle = pg; cx.strokeStyle = "#31184F"; cx.lineWidth = 3;
-  roundRect(cx, 32, 64, 86, 36, 8); cx.fill(); cx.stroke();
-  cx.fillStyle = "#FFDE7A"; cx.strokeStyle = "#9A6A0E"; cx.lineWidth = 2;
-  roundRect(cx, 66, 72, 18, 16, 4); cx.fill(); cx.stroke();
-  // blue crystal roof
-  const rg = cx.createLinearGradient(0, 6, 0, 66);
-  rg.addColorStop(0, "#7A9CF5"); rg.addColorStop(1, "#4A3FBF");
-  cx.fillStyle = rg; cx.strokeStyle = "#31184F"; cx.lineWidth = 3.5;
-  cx.beginPath(); cx.moveTo(75, 4); cx.lineTo(140, 66); cx.lineTo(10, 66); cx.closePath(); cx.fill(); cx.stroke();
-  // gold inner triangle
-  cx.strokeStyle = "#FFC53D"; cx.lineWidth = 3.5;
-  cx.beginPath(); cx.moveTo(75, 28); cx.lineTo(120, 64); cx.lineTo(30, 64); cx.closePath(); cx.stroke();
-  cx.fillStyle = "rgba(159,232,255,.3)";
-  cx.beginPath(); cx.moveTo(75, 40); cx.lineTo(102, 64); cx.lineTo(48, 64); cx.closePath(); cx.fill();
-  // flag
+  roundRect(cx, 30, 62, 90, 38, 8); cx.fill(); cx.stroke();
+  cx.fillStyle = "rgba(30,15,58,.3)"; roundRect(cx, 96, 62, 24, 38, 8); cx.fill();
+  cx.fillStyle = "#FFDE7A"; cx.strokeStyle = "#9A6A0E"; cx.lineWidth = 2.2;
+  roundRect(cx, 66, 70, 18, 17, 4); cx.fill(); cx.stroke();
+  // hanging banners
   cx.fillStyle = "#FF4D5E"; cx.strokeStyle = "#B02737"; cx.lineWidth = 2;
-  cx.beginPath(); cx.moveTo(78, 4); cx.lineTo(98, 9); cx.lineTo(78, 16); cx.closePath(); cx.fill(); cx.stroke();
-  cx.strokeStyle = "#9A6A0E"; cx.lineWidth = 3;
-  cx.beginPath(); cx.moveTo(75, 6); cx.lineTo(75, 22); cx.stroke();
-  cx.fillStyle = "#FFDE7A"; cx.strokeStyle = "#9A6A0E"; cx.lineWidth = 2;
-  cx.beginPath(); cx.arc(75, 8, 5, 0, TAU); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.moveTo(40, 64); cx.lineTo(52, 64); cx.lineTo(52, 88); cx.lineTo(46, 82); cx.lineTo(40, 88); cx.closePath(); cx.fill(); cx.stroke();
+  cx.beginPath(); cx.moveTo(98, 64); cx.lineTo(110, 64); cx.lineTo(110, 88); cx.lineTo(104, 82); cx.lineTo(98, 88); cx.closePath(); cx.fill(); cx.stroke();
+  cx.fillStyle = "#FFDE7A"; cx.beginPath(); cx.arc(46, 71, 2.6, 0, TAU); cx.fill(); cx.beginPath(); cx.arc(104, 71, 2.6, 0, TAU); cx.fill();
+  // crystal roof: lit left face + shaded right face + shingle lines
+  cx.strokeStyle = "#31184F"; cx.lineWidth = 3.5;
+  const rgL = cx.createLinearGradient(0, 6, 0, 66);
+  rgL.addColorStop(0, "#8FB0FF"); rgL.addColorStop(1, "#5A50D8");
+  cx.fillStyle = rgL;
+  cx.beginPath(); cx.moveTo(75, 4); cx.lineTo(75, 4); cx.lineTo(140, 66); cx.lineTo(10, 66); cx.closePath(); cx.fill(); cx.stroke();
+  cx.fillStyle = "rgba(26,18,80,.35)";
+  cx.beginPath(); cx.moveTo(75, 4); cx.lineTo(140, 66); cx.lineTo(75, 66); cx.closePath(); cx.fill();
+  cx.strokeStyle = "rgba(30,24,90,.5)"; cx.lineWidth = 1.6;
+  for (let i = 1; i <= 3; i++) {
+    const t = i / 4;
+    cx.beginPath(); cx.moveTo(75 - 65 * t, 66 - 62 * (1 - t) * 0 - (1 - t) * 0 + (t - 1) * 0); cx.moveTo(75 - 65 * t, 66); cx.lineTo(75, 4 + 62 * t); cx.lineTo(75 + 65 * t, 66); cx.stroke();
+  }
+  // gold ridge trim
+  cx.strokeStyle = "#FFC53D"; cx.lineWidth = 3.5;
+  cx.beginPath(); cx.moveTo(75, 4); cx.lineTo(10, 66); cx.moveTo(75, 4); cx.lineTo(140, 66); cx.stroke();
+  // finial + pennant
+  cx.fillStyle = "#FF4D5E"; cx.strokeStyle = "#B02737"; cx.lineWidth = 2;
+  cx.beginPath(); cx.moveTo(78, 3); cx.lineTo(100, 9); cx.lineTo(78, 16); cx.closePath(); cx.fill(); cx.stroke();
+  cx.fillStyle = "#FFDE7A"; cx.strokeStyle = "#9A6A0E"; cx.lineWidth = 2.2;
+  cx.beginPath(); cx.arc(75, 6, 5.5, 0, TAU); cx.fill(); cx.stroke();
 });
 SPR.thRubble = makeSprite(150, 70, (cx, w, h) => {
   cx.fillStyle = "rgba(0,0,0,0.3)";
@@ -441,20 +475,39 @@ SPR.thRubble = makeSprite(150, 70, (cx, w, h) => {
 /* ── cannon tower ── */
 function defenseSprite(fn) { return makeSprite(96, 110, fn); }
 SPR.cannon = defenseSprite((cx, w, h) => {
-  shadow(cx, w / 2, h - 6, 34, 9);
-  stoneBase(cx, 24, 40, 48, 60, true);
-  cx.fillStyle = "#7E8AA6"; cx.strokeStyle = "#39435C"; cx.lineWidth = 3;
-  cx.beginPath(); cx.ellipse(48, 40, 24, 9, 0, 0, TAU); cx.fill(); cx.stroke();
-  // barrel
-  cx.save(); cx.translate(40, 50); cx.rotate(-0.5);
-  cx.fillStyle = "#3B4254"; cx.strokeStyle = "#22283A"; cx.lineWidth = 3;
-  roundRect(cx, 0, -8, 34, 16, 8); cx.fill(); cx.stroke();
-  cx.fillStyle = "#5E3D20"; cx.beginPath(); cx.arc(34, 0, 8, 0, TAU); cx.fill(); cx.stroke();
+  shadow(cx, w / 2, h - 6, 36, 9);
+  // stone ring platform with brick seams
+  const pg = cx.createLinearGradient(0, 66, 0, 104);
+  pg.addColorStop(0, "#AAB6CC"); pg.addColorStop(1, "#5F6B87");
+  cx.fillStyle = pg; cx.strokeStyle = "#39435C"; cx.lineWidth = 3;
+  cx.beginPath(); cx.ellipse(48, 92, 38, 14, 0, 0, TAU); cx.fill(); cx.stroke();
+  cx.fillStyle = "#8D99B4";
+  cx.beginPath(); cx.ellipse(48, 86, 34, 12, 0, 0, TAU); cx.fill(); cx.stroke();
+  cx.strokeStyle = "rgba(57,67,92,.5)"; cx.lineWidth = 1.4;
+  for (let i = 0; i < 6; i++) { const a = i / 6 * TAU; cx.beginPath(); cx.moveTo(48 + Math.cos(a) * 24, 86 + Math.sin(a) * 8); cx.lineTo(48 + Math.cos(a) * 34, 86 + Math.sin(a) * 12); cx.stroke(); }
+  // wooden carriage + spoked wheel
+  cx.fillStyle = "#6B4A2B"; cx.strokeStyle = "#33210E"; cx.lineWidth = 3;
+  roundRect(cx, 30, 64, 38, 16, 5); cx.fill(); cx.stroke();
+  cx.fillStyle = "#8A5B33"; cx.strokeStyle = "#4A3116"; cx.lineWidth = 3;
+  cx.beginPath(); cx.arc(36, 80, 11, 0, TAU); cx.fill(); cx.stroke();
+  cx.strokeStyle = "#33210E"; cx.lineWidth = 2;
+  for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI; cx.beginPath(); cx.moveTo(36 - Math.cos(a) * 9, 80 - Math.sin(a) * 9); cx.lineTo(36 + Math.cos(a) * 9, 80 + Math.sin(a) * 9); cx.stroke(); }
+  cx.fillStyle = "#3B4254"; cx.beginPath(); cx.arc(36, 80, 3, 0, TAU); cx.fill();
+  // barrel: big, banded, up-tilted
+  cx.save(); cx.translate(40, 62); cx.rotate(-0.55);
+  const bg = cx.createLinearGradient(0, -12, 0, 12);
+  bg.addColorStop(0, "#59647E"); bg.addColorStop(.5, "#39435C"); bg.addColorStop(1, "#232A3E");
+  cx.fillStyle = bg; cx.strokeStyle = "#181E2E"; cx.lineWidth = 3;
+  cx.beginPath(); cx.moveTo(0, -9); cx.lineTo(40, -12); cx.quadraticCurveTo(48, 0, 40, 12); cx.lineTo(0, 9); cx.quadraticCurveTo(-8, 0, 0, -9); cx.closePath(); cx.fill(); cx.stroke();
+  // muzzle lip + bands
+  cx.fillStyle = "#232A3E"; cx.strokeStyle = "#181E2E"; cx.lineWidth = 2.5;
+  roundRect(cx, 38, -14, 9, 28, 4); cx.fill(); cx.stroke();
+  cx.strokeStyle = "#6B7793"; cx.lineWidth = 2.5;
+  cx.beginPath(); cx.moveTo(12, -10.5); cx.lineTo(12, 10.5); cx.moveTo(26, -11.4); cx.lineTo(26, 11.4); cx.stroke();
+  // top sheen
+  cx.strokeStyle = "rgba(255,255,255,.28)"; cx.lineWidth = 2.5;
+  cx.beginPath(); cx.moveTo(4, -6); cx.lineTo(36, -8.4); cx.stroke();
   cx.restore();
-  // wheels hint
-  cx.fillStyle = "#5E3D20";
-  cx.beginPath(); cx.arc(30, 96, 6, 0, TAU); cx.fill();
-  cx.beginPath(); cx.arc(66, 96, 6, 0, TAU); cx.fill();
 });
 SPR.archer = defenseSprite((cx, w, h) => {
   shadow(cx, w / 2, h - 6, 32, 8);
@@ -629,6 +682,23 @@ SPR.tree = makeSprite(64, 86, (cx, w, h) => {
   cx.fillStyle = "#387144";
   cx.beginPath(); cx.moveTo(32, 26); cx.lineTo(56, 70); cx.lineTo(8, 70); cx.closePath(); cx.fill(); cx.stroke();
 });
+/* ── corner torch (always lit — the village feels inhabited) ── */
+SPR.torch = makeSprite(40, 78, (cx, w, h) => {
+  shadow(cx, w / 2, h - 4, 10, 4);
+  cx.fillStyle = "#6B4A2B"; cx.strokeStyle = "#33210E"; cx.lineWidth = 2.5;
+  roundRect(cx, 16, 26, 8, 48, 3); cx.fill(); cx.stroke();
+  cx.fillStyle = "#4A3116";
+  roundRect(cx, 13, 30, 14, 5, 2); cx.fill();
+  // iron cup
+  cx.fillStyle = "#3B4254"; cx.strokeStyle = "#22283A"; cx.lineWidth = 2;
+  cx.beginPath(); cx.moveTo(12, 26); cx.lineTo(28, 26); cx.lineTo(25, 18); cx.lineTo(15, 18); cx.closePath(); cx.fill(); cx.stroke();
+  // flame
+  cx.fillStyle = "#FF7A3D";
+  cx.beginPath(); cx.moveTo(20, 2); cx.quadraticCurveTo(28, 10, 24, 17); cx.quadraticCurveTo(20, 20, 16, 17); cx.quadraticCurveTo(12, 10, 20, 2); cx.closePath(); cx.fill();
+  cx.fillStyle = "#FFDE7A";
+  cx.beginPath(); cx.moveTo(20, 7); cx.quadraticCurveTo(24, 12, 21, 16); cx.quadraticCurveTo(20, 17, 19, 16); cx.quadraticCurveTo(16, 12, 20, 7); cx.closePath(); cx.fill();
+});
+
 SPR.treeStump = makeSprite(64, 30, (cx, w, h) => {
   shadow(cx, w / 2, h - 4, 16, 5);
   cx.fillStyle = "#5E3D20"; cx.strokeStyle = "#33210E"; cx.lineWidth = 2;
@@ -664,10 +734,11 @@ function drawTroopFigure(cx, def, pose) {
   if (def.key === "hog")     return drawHog(cx, def);
   // generic humanoid
   const bodyH = 20 * s, headR = 7 * s;
-  // legs
+  // legs — pose 1 swaps stride for a two-frame walk
+  const stride = pose ? -1 : 1;
   cx.fillStyle = def.dark; cx.strokeStyle = "rgba(0,0,0,.4)"; cx.lineWidth = 1.5;
-  cx.fillRect(cx0 - 6 * s, baseY - 8 * s, 4 * s, 8 * s);
-  cx.fillRect(cx0 + 2 * s, baseY - 8 * s, 4 * s, 8 * s);
+  cx.fillRect(cx0 - 6 * s + stride * 2 * s, baseY - 8 * s, 4 * s, 8 * s - stride * 1.5 * s);
+  cx.fillRect(cx0 + 2 * s - stride * 2 * s, baseY - 8 * s, 4 * s, 8 * s + stride * 1.5 * s);
   // body
   cx.fillStyle = def.color; cx.strokeStyle = def.dark; cx.lineWidth = 2;
   roundRect(cx, cx0 - 9 * s, baseY - bodyH, 18 * s, bodyH - 6, 5 * s); cx.fill(); cx.stroke();
@@ -737,9 +808,12 @@ function drawHog(cx, def) {
   roundRect(cx, 16, 26, 12, 10, 3); cx.fill(); cx.stroke();
   cx.strokeStyle = "#5E3D20"; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(30, 24); cx.lineTo(34, 12); cx.stroke();
 }
-// prerender every troop (idle pose)
-TROOP_DEFS.forEach(t => SPR["troop_" + t.key] = troopSprite(t));
-Object.values(SECRET_TROOPS).forEach(t => SPR["troop_" + t.key] = troopSprite(t));
+// prerender every troop: two walk frames (idle alias = frame 0)
+[...TROOP_DEFS, ...Object.values(SECRET_TROOPS)].forEach(t => {
+  SPR["troop_" + t.key + "_0"] = troopSprite(t, 0);
+  SPR["troop_" + t.key + "_1"] = troopSprite(t, 1);
+  SPR["troop_" + t.key] = SPR["troop_" + t.key + "_0"];
+});
 
 /* ── projectiles ── */
 SPR.projCannon = makeSprite(14, 14, (cx, w, h) => {
@@ -989,10 +1063,38 @@ function showStarToast(label) {
     { opacity: 1, transform: "scale(1)", offset: 0.7 }, { opacity: 0, transform: "scale(.9)" },
   ], { duration: 1600, easing: "cubic-bezier(.2,.9,.3,1.4)" });
 }
+/* drawn toast icons — OS emoji is the uniform of slop */
+const _ic = (inner) => `<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">${inner}</svg>`;
+const _g = 'fill="#D89A1B" stroke="#7A5000" stroke-width="1.6" stroke-linejoin="round"';
+const ICON_SVG = {
+  star:  _ic(`<path d="M12 2l2.9 6.2 6.6.7-5 4.4 1.4 6.6L12 16.7 6.1 19.9l1.4-6.6-5-4.4 6.6-.7z" ${_g}/>`),
+  medal: _ic(`<path d="M8 2h3l1 5 1-5h3l-2.5 7h-4z" fill="#B03A2E" stroke="#5C1610" stroke-width="1.4"/><circle cx="12" cy="15" r="6" ${_g}/><circle cx="12" cy="15" r="2.6" fill="#FFDE7A" stroke="none"/>`),
+  warn:  _ic(`<path d="M12 3 22 20H2z" fill="#E8A21B" stroke="#7A5000" stroke-width="1.6" stroke-linejoin="round"/><rect x="11" y="9" width="2" height="6" rx="1" fill="#33210E"/><circle cx="12" cy="17.4" r="1.3" fill="#33210E"/>`),
+  coin:  _ic(`<circle cx="12" cy="12" r="9" ${_g}/><circle cx="12" cy="12" r="5.4" fill="none" stroke="#7A5000" stroke-width="1.4"/>`),
+  flask: _ic(`<path d="M10 3h4v5l5 10a2 2 0 0 1-1.8 3H6.8A2 2 0 0 1 5 18l5-10z" fill="#C06CF5" stroke="#5E1B96" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.4 14h9.2" stroke="#5E1B96" stroke-width="1.4"/>`),
+  gem:   _ic(`<path d="M12 2l7 6-7 14L5 8z" fill="#59E4E0" stroke="#1E9C99" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 8h14" stroke="#BFF8F6" stroke-width="1.3"/>`),
+  castle:_ic(`<path d="M5 21V9h2V6h2v3h2V6h2v3h2V6h2v3h2v12z" fill="#9AA6BC" stroke="#39435C" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 21v-5h4v5" fill="#33210E" stroke="none"/>`),
+  burst: _ic(`<path d="M12 1l1.8 6L19 4l-3 5.2 6 .8-5.4 3 3.4 5-6-1.8L12 23l-2-6.8L4 18l3.4-5L2 10l6-.8L5 4l5.2 3z" fill="#FF7A3D" stroke="#B03A2E" stroke-width="1.3" stroke-linejoin="round"/>`),
+  fire:  _ic(`<path d="M12 2c1 4-4 5-3 9 .5 2 2 3 3 3s5-1.5 4-6c2 1 4 4 3 8-.8 3.4-4 5-7 5s-6.6-2-7-6c-.6-5 5-7 7-13z" fill="#FF7A3D" stroke="#B03A2E" stroke-width="1.4" stroke-linejoin="round"/>`),
+  snow:  _ic(`<path d="M12 2v20M4 6l16 12M20 6L4 18M6 12h12" fill="none" stroke="#A8E6FF" stroke-width="1.8" stroke-linecap="round"/>`),
+  shield:_ic(`<path d="M12 2l8 3v7c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V5z" fill="#5D8DF6" stroke="#16306B" stroke-width="1.6" stroke-linejoin="round"/>`),
+  swords:_ic(`<path d="M4 4l11 11M20 4L9 15" stroke="#C9D6EE" stroke-width="2.2" stroke-linecap="round"/><path d="M13 17l4-4 3 3-4 4zM11 17l-4-4-3 3 4 4z" fill="#8A5B33" stroke="#4A3116" stroke-width="1.2"/>`),
+  gear:  _ic(`<circle cx="12" cy="12" r="5" fill="#9AA6BC" stroke="#39435C" stroke-width="1.6"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8" stroke="#39435C" stroke-width="1.8" stroke-linecap="round"/>`),
+  scroll:_ic(`<path d="M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#F4E7C3" stroke="#8A6A2E" stroke-width="1.6"/><path d="M8 9h8M8 12.5h8M8 16h5" stroke="#8A6A2E" stroke-width="1.4" stroke-linecap="round"/>`),
+  lock:  _ic(`<rect x="5" y="10" width="14" height="10" rx="2" fill="#9AA6BC" stroke="#39435C" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="#39435C" stroke-width="1.8"/>`),
+  note:  _ic(`<path d="M9 18V5l10-2v12" fill="none" stroke="#C9D6EE" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.6" cy="18" r="2.6" fill="#C9D6EE"/><circle cx="16.6" cy="15" r="2.6" fill="#C9D6EE"/>`),
+  flag:  _ic(`<path d="M5 21V3" stroke="#8A5B33" stroke-width="2" stroke-linecap="round"/><path d="M5 4h13l-3 4 3 4H5z" fill="#4E9CD8" stroke="#1F5E8C" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 6.5h5M11.5 4v8" stroke="#F5D63C" stroke-width="1.6"/>`),
+};
+const TOAST_MAP = {
+  "⭐":"star","🏅":"medal","⚠️":"warn","🪙":"coin","🧪":"flask","💎":"gem","🏰":"castle","💥":"burst",
+  "🔥":"fire","❄️":"snow","🛡️":"shield","⚔️":"swords","🤖":"gear","📜":"scroll","🔒":"lock",
+  "🔇":"note","🔊":"note","🗑️":"warn","👀":"warn","💪":"swords","🐗":"swords","🇸🇪":"flag",
+};
 function addToast(icon, text) {
   const t = document.createElement("div");
   t.className = "toast";
-  t.innerHTML = `<span class="t-icon">${icon}</span><span>${text}</span>`;
+  const key = TOAST_MAP[icon];
+  t.innerHTML = `<span class="t-icon">${key ? ICON_SVG[key] : icon}</span><span>${text}</span>`;
   toastZone.appendChild(t);
   setTimeout(() => { t.classList.add("out"); setTimeout(() => t.remove(), 360); }, 3400);
 }
@@ -1334,6 +1436,7 @@ function dealSplash(t, target, dmg, radius) {
 /* ═════════════════════════════ DEFENSES ═════════════════════════════ */
 function updateDefense(b, dt) {
   if (b.destroyed) return;
+  if (b.recoil > 0) b.recoil = Math.max(0, b.recoil - dt * 4);
   if (STATE.freezeTimer > 0) return;   // FREEZE spell: defenses stood down
   b.cooldown -= dt; b.retargetT -= dt;
   const def = b.type;
@@ -1388,7 +1491,12 @@ function updateDefense(b, dt) {
 function fireDefense(b, def, tgt) {
   const proj = { gx: b.cx, gy: b.cy - 0.5, tx: tgt.gx, ty: tgt.gy, target: tgt, def, t: 0, dur: 0.25, kind: def };
   STATE.projectiles.push(proj);
-  if (def === "cannon") Audio.SFX.cannon();
+  if (def === "cannon") {
+    Audio.SFX.cannon();
+    b.recoil = 1;
+    spawnParticles(b.cx + 0.3, b.cy - 0.7, 4, "#FFD98A", 0.22, "blast");
+    spawnParticles(b.cx + 0.3, b.cy - 0.7, 3, "#8C96AC", 0.4, "puff");
+  }
   else if (def === "archer") Audio.SFX.arrow();
   else Audio.SFX.bolt();
 }
@@ -1490,7 +1598,7 @@ function spawnParticles(gx, gy, n, color, life, kind) {
 function updateParticles(dt) {
   for (const p of STATE.particles) {
     p.gx += p.vx * dt; p.gy += p.vy * dt;
-    p.vy += dt * (p.kind === "puff" || p.kind === "heal" ? -0.4 : 1.2);
+    p.vy += dt * (p.kind === "puff" || p.kind === "heal" ? -0.4 : p.kind === "smoke" ? -0.06 : 1.2);
     p.life -= dt;
     if (p.kind === "blast") p.vx *= 0.94, p.vy *= 0.94;
     if (p.kind === "chunk") p.vx *= 0.985;
@@ -1511,6 +1619,22 @@ function spawnDebris(gx, gy, n, palette) {
     });
   }
 }
+/* chimney smoke: the village breathes even before a single troop lands */
+function tickSmoke(dt) {
+  STATE.smokeT = (STATE.smokeT || 0) - dt;
+  if (STATE.smokeT > 0 || REDUCED) return;
+  STATE.smokeT = 0.8 + rand(0, 0.7);
+  const src = STATE.buildings.filter(b => !b.destroyed && (b.type === "th" || b.type === "hut" || b.type === "camp"));
+  if (!src.length) return;
+  const b = pick(src);
+  const oy = b.type === "th" ? 2.2 : 1.3;
+  STATE.particles.push({
+    gx: b.cx + rand(-.15, .15), gy: b.cy - oy,
+    vx: rand(-.06, .14), vy: -rand(.25, .45),
+    life: rand(1.8, 2.6), max: 2.6, color: "#C9CFDC", kind: "smoke", size: rand(2.5, 4),
+  });
+}
+
 /* deploy dust ring — a quick expanding ellipse on the grass */
 function spawnDustRing(gx, gy) {
   if (REDUCED) return;
@@ -1540,6 +1664,12 @@ function buildStars() {
   STARS = [];
   for (let i = 0; i < 70; i++) STARS.push({ fx: Math.random(), fy: Math.random() * 0.62, r: rand(0.4, 1.5), tw: rand(0, TAU) });
 }
+/* seeded rand — decor stays put across resizes instead of reshuffling */
+let _seed = 0;
+function srand() { _seed = (_seed * 1664525 + 1013904223) >>> 0; return _seed / 4294967296; }
+function srng(a, b) { return a + srand() * (b - a); }
+const insideRing = (x, y) => x > 5.2 && x < 17.8 && y > 5.2 && y < 17.8;
+
 function buildGround() {
   // extent of village diamond over grid LO..HI
   const span = HI - LO;            // grid units across
@@ -1549,20 +1679,99 @@ function buildGround() {
   groundCanvas.width = Math.ceil(gw * DPR); groundCanvas.height = Math.ceil(gh * DPR);
   const gx = groundCanvas.getContext("2d");
   gx.scale(DPR, DPR);
+  gx.lineJoin = "round"; gx.lineCap = "round";
   // base grass field color
   gx.fillStyle = "#2A5233"; gx.fillRect(0, 0, gw, gh);
-  // iso tile checker
   const ox = gw / 2, oy = 30;      // screen origin of grid (0,0)
+  const at = (x, y) => ({ x: ox + (x - y) * TW2, y: oy + (x + y) * TH2 });
+
+  // iso tile checker with organic per-tile tone jitter (no two tiles identical)
+  _seed = 987654321;
   for (let x = LO; x < HI; x++) {
     for (let y = LO; y < HI; y++) {
-      const sx = ox + (x - y) * TW2, sy = oy + (x + y) * TH2;
-      const edge = x === 0 || y === 0 || x === GRID - 1 || y === GRID - 1;
+      const p = at(x, y);
       const out = x < 0 || y < 0 || x >= GRID || y >= GRID;
-      const tile = out ? SPR.tileEdge : (((x + y) & 1) ? SPR.tileA : SPR.tileB);
-      gx.drawImage(tile, sx - TW2, sy - TH2, TW, TH);
-      if (edge) { gx.globalAlpha = 0.5; gx.drawImage(SPR.tileEdge, sx - TW2, sy - TH2, TW, TH); gx.globalAlpha = 1; }
+      const tone = (x + y) & 1;
+      const base = out ? [42, 74, 50] : tone ? [63, 122, 76] : [52, 98, 66];
+      const j = out ? 3 : 7;
+      const r = Math.round(base[0] + srng(-j, j)), g = Math.round(base[1] + srng(-j, j)), b = Math.round(base[2] + srng(-j, j));
+      gx.fillStyle = `rgb(${r},${g},${b})`;
+      gx.strokeStyle = out ? "rgba(24,46,30,.7)" : "rgba(31,61,39,.75)";
+      gx.lineWidth = 1.4;
+      gx.beginPath();
+      gx.moveTo(p.x, p.y - TH2 + 1); gx.lineTo(p.x + TW2 - 1, p.y); gx.lineTo(p.x, p.y + TH2 - 1); gx.lineTo(p.x - TW2 + 1, p.y);
+      gx.closePath(); gx.fill(); gx.stroke();
     }
   }
+
+  // worn dirt path: winds in from the south-east edge up to the walls
+  _seed = 424242;
+  gx.save();
+  for (let t = 0; t <= 1; t += 0.035) {
+    const px = 11.6 + Math.sin(t * 5.2) * 1.1 + t * 1.6;
+    const py = 25.5 - t * 8.0;
+    const p = at(px, py);
+    const rr = 20 - t * 6 + srng(-2, 2);
+    gx.fillStyle = `rgba(${138 + (srng(-8, 8) | 0)},${106 + (srng(-6, 6) | 0)},66,.92)`;
+    gx.beginPath(); gx.ellipse(p.x, p.y, rr, rr * 0.5, 0, 0, TAU); gx.fill();
+  }
+  // path pebbles
+  for (let i = 0; i < 14; i++) {
+    const t = srand();
+    const p = at(11.6 + Math.sin(t * 5.2) * 1.1 + t * 1.6 + srng(-.5, .5), 25.5 - t * 8.0 + srng(-.4, .4));
+    gx.fillStyle = "rgba(112,86,54,.9)";
+    gx.beginPath(); gx.ellipse(p.x, p.y, srng(1.5, 3), srng(1, 2), 0, 0, TAU); gx.fill();
+  }
+  gx.restore();
+
+  // scattered life: grass tufts, flowers, stones, bushes — never inside the walls
+  _seed = 13371337;
+  for (let i = 0; i < 240; i++) {                     // tufts
+    const x = srng(LO + .5, HI - .5), y = srng(LO + .5, HI - .5);
+    if (insideRing(x, y)) continue;
+    const p = at(x, y);
+    gx.strokeStyle = srand() < .5 ? "rgba(84,150,98,.8)" : "rgba(38,74,48,.8)";
+    gx.lineWidth = 1.3;
+    const h = srng(3, 6);
+    gx.beginPath(); gx.moveTo(p.x, p.y); gx.lineTo(p.x - 1.5, p.y - h); gx.moveTo(p.x + 2, p.y); gx.lineTo(p.x + 3, p.y - h * .8); gx.stroke();
+  }
+  for (let i = 0; i < 26; i++) {                      // flowers
+    const x = srng(LO + 1, HI - 1), y = srng(LO + 1, HI - 1);
+    if (insideRing(x, y)) continue;
+    const p = at(x, y);
+    const col = ["#F2E6B8", "#E8A8C8", "#F5F1E4"][(srand() * 3) | 0];
+    for (let k = 0; k < 4; k++) { gx.fillStyle = col; gx.beginPath(); gx.arc(p.x + Math.cos(k * 1.57) * 2.4, p.y + Math.sin(k * 1.57) * 1.6, 1.5, 0, TAU); gx.fill(); }
+    gx.fillStyle = "#D8A21B"; gx.beginPath(); gx.arc(p.x, p.y, 1.4, 0, TAU); gx.fill();
+  }
+  for (let i = 0; i < 12; i++) {                      // stones
+    const x = srng(LO + 1, HI - 1), y = srng(LO + 1, HI - 1);
+    if (insideRing(x, y)) continue;
+    const p = at(x, y);
+    const r = srng(3, 6.5);
+    gx.fillStyle = "rgba(0,0,0,.18)"; gx.beginPath(); gx.ellipse(p.x + 1, p.y + 2, r, r * .45, 0, 0, TAU); gx.fill();
+    gx.fillStyle = `rgb(${140 + (srng(-14, 14) | 0)},${150 + (srng(-14, 14) | 0)},${168 + (srng(-10, 10) | 0)})`;
+    gx.strokeStyle = "#4A5468"; gx.lineWidth = 1.6;
+    gx.beginPath(); gx.ellipse(p.x, p.y, r, r * .62, srng(-.4, .4), 0, 0, TAU); gx.fill(); gx.stroke();
+    gx.fillStyle = "rgba(255,255,255,.25)"; gx.beginPath(); gx.ellipse(p.x - r * .3, p.y - r * .25, r * .3, r * .18, 0, 0, TAU); gx.fill();
+  }
+  for (let i = 0; i < 10; i++) {                      // bushes
+    const x = srng(LO + 1, HI - 1), y = srng(LO + 1, HI - 1);
+    if (insideRing(x, y)) continue;
+    const p = at(x, y);
+    const r = srng(6, 10);
+    gx.fillStyle = "rgba(0,0,0,.2)"; gx.beginPath(); gx.ellipse(p.x, p.y + r * .5, r * 1.2, r * .4, 0, 0, TAU); gx.fill();
+    gx.fillStyle = "#2F6039"; gx.strokeStyle = "#1F3D27"; gx.lineWidth = 2;
+    gx.beginPath(); gx.arc(p.x - r * .5, p.y, r * .7, 0, TAU); gx.fill(); gx.stroke();
+    gx.beginPath(); gx.arc(p.x + r * .45, p.y - r * .1, r * .62, 0, TAU); gx.fill(); gx.stroke();
+    gx.fillStyle = "#3C7548"; gx.beginPath(); gx.arc(p.x - r * .1, p.y - r * .38, r * .58, 0, TAU); gx.fill(); gx.stroke();
+    gx.fillStyle = "rgba(255,255,255,.12)"; gx.beginPath(); gx.arc(p.x - r * .25, p.y - r * .5, r * .28, 0, TAU); gx.fill();
+  }
+
+  // soft edge shading so the island doesn't end in a hard line
+  const edgeG = gx.createRadialGradient(ox, oy + span * TH2, span * TW2 * .52, ox, oy + span * TH2, span * TW2 * 1.02);
+  edgeG.addColorStop(0, "rgba(10,18,26,0)"); edgeG.addColorStop(1, "rgba(10,18,26,.5)");
+  gx.fillStyle = edgeG; gx.fillRect(0, 0, gw, gh);
+
   groundW = gw; groundH = gh;
 }
 /* world origin offset within ground canvas (grid 0,0 screen pos) */
@@ -1756,14 +1965,16 @@ function drawBuilding(b) {
   else if (b.type === "hut") spr = SPR.hut;
   else if (b.type === "camp") spr = SPR.camp;
   else if (b.type === "tree") spr = SPR.tree;
+  else if (b.type === "torch") spr = SPR.torch;
   // shadow ellipse
   ctx.save(); ctx.globalAlpha = 0.3 * grow;
   ctx.fillStyle = "#000";
   const sz = spriteSize(spr);
   ctx.beginPath(); ctx.ellipse(p.x, p.y, sz.w * 0.4 * STATE.cam.z, sz.w * 0.14 * STATE.cam.z, 0, 0, TAU); ctx.fill();
   ctx.restore();
-  // hp bar if damaged
-  drawSprite(spr, p.x, p.y, 0.5, 1, STATE.cam.z * (grow), grow);
+  // cannon recoil: quick squash-back on fire
+  const kick = b.type === "cannon" && b.recoil > 0 ? b.recoil : 0;
+  drawSprite(spr, p.x - kick * 3 * STATE.cam.z, p.y + kick * 1.5 * STATE.cam.z, 0.5, 1, STATE.cam.z * grow * (1 - kick * 0.05), grow);
   // FREEZE overlay: defenses locked in ice
   if (b.isDefense && STATE.freezeTimer > 0) {
     const sz = spriteSize(spr);
@@ -1774,6 +1985,18 @@ function drawBuilding(b) {
     rg.addColorStop(0, "rgba(168,230,255,.95)"); rg.addColorStop(1, "rgba(168,230,255,0)");
     ctx.fillStyle = rg;
     ctx.beginPath(); ctx.ellipse(p.x, gy, sz.w * 0.5 * STATE.cam.z, sz.h * 0.6 * STATE.cam.z, 0, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+  // corner torches flicker always — tiny life
+  if (b.type === "torch") {
+    const flick = 0.5 + Math.sin(now() / 90 + b.cx * 7) * 0.18 + Math.sin(now() / 310 + b.cy) * 0.12;
+    const gy2 = p.y - 64 * STATE.cam.z;
+    ctx.save();
+    ctx.globalAlpha = clamp(flick, 0.25, 0.95);
+    const rg2 = ctx.createRadialGradient(p.x, gy2, 1, p.x, gy2, 22 * STATE.cam.z);
+    rg2.addColorStop(0, "rgba(255,190,90,.9)"); rg2.addColorStop(1, "rgba(255,140,50,0)");
+    ctx.fillStyle = rg2;
+    ctx.beginPath(); ctx.arc(p.x, gy2, 22 * STATE.cam.z, 0, TAU); ctx.fill();
     ctx.restore();
   }
   // night torches: warm flickering glow as the raid runs into dusk
@@ -1833,7 +2056,8 @@ function drawWall(w) {
 
 function drawTroop(t) {
   const p = iso(t.gx, t.gy);
-  const spr = SPR["troop_" + t.key];
+  const frame = (!t.air && t.moving) ? (Math.floor(t.bob * 1.7) & 1) : 0;
+  const spr = SPR["troop_" + t.key + "_" + frame] || SPR["troop_" + t.key];
   const air = t.air;
   const bobY = air ? Math.sin(t.bob) * 3 * STATE.cam.z : 0;
   const atk = t.attackAnim;
@@ -1920,6 +2144,11 @@ function drawParticle(p) {
     ctx.fillStyle = p.color;
     const s = p.size * STATE.cam.z * (0.6 + r * 0.4);
     ctx.fillRect(-s / 2, -s / 2, s, s); ctx.restore();
+  }
+  else if (p.kind === "smoke") {
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = r * 0.32;
+    ctx.beginPath(); ctx.arc(a.x, a.y, p.size * STATE.cam.z * (2 - r), 0, TAU); ctx.fill();
   }
   else if (p.kind === "ice") {
     ctx.save(); ctx.translate(a.x, a.y); ctx.rotate(p.life * 4);
@@ -2224,10 +2453,10 @@ function buildProfile() {
       <div class="p-role">Product Engineer <b>@ Gradr</b> · Kubernetes Contributor</div>
       <div class="p-meta">B.TECH ECE · CTAE UDAIPUR · 2023–2027</div>
       <div class="p-links">
-        <a class="p-link gold" href="mailto:divysinghvi5@gmail.com">✉️ EMAIL</a>
-        <a class="p-link" href="https://github.com/divysinghvi" target="_blank" rel="noopener">🐙 GITHUB</a>
-        <a class="p-link" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">💼 LINKEDIN</a>
-        <a class="p-link" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener">📄 RESUME</a>
+        <a class="p-link gold" href="mailto:divysinghvi5@gmail.com"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6.5L21 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>EMAIL</a>
+        <a class="p-link" href="https://github.com/divysinghvi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>GITHUB</a>
+        <a class="p-link" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0"/></svg>LINKEDIN</a>
+        <a class="p-link" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5zM8 12h8v2H8zm0 4h8v2H8z"/></svg>RESUME</a>
       </div>
     </div>
     <div class="p-sect">EXPERIENCE</div>
@@ -2242,7 +2471,7 @@ function buildProfile() {
     <div class="p-job"><ul>${CONTENT.th.list.map(li => `<li>${li}</li>`).join("")}</ul></div>
     <div class="p-sect">SKILLS — THE ARMY</div>
     <div class="p-skills">${skills}</div>
-    <div class="p-note">Happily shipping at Gradr — not job-hunting. Open-source collabs, side quests and genuinely hard problems: gates open. ⚔️ And yes — you can raid all of this. Close the panel and tap the grass.</div>
+    <div class="p-note">Happily shipping at Gradr — not job-hunting. For open source and genuinely hard problems, the gates are open.</div>
   `;
 }
 function openProfile() {
@@ -2366,7 +2595,7 @@ function renderWarLog() {
   else {
     warlogBody.innerHTML = STATE.log.map(e => {
       const stars = [0,1,2].map(i => `<svg viewBox="0 0 60 58" class="${i<e.stars?'e':''}"><path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z" fill="#FFC53D" stroke="#9A6A0E" stroke-width="2"/></svg>`).join("");
-      return `<div class="wl-row"><div class="wl-stars">${stars}</div><div class="wl-meta"><div class="wl-title">${e.stars>=3?'VILLAGE DESTROYED':e.stars>=1?'RAID COMPLETE':'DEFEAT'}</div><div class="wl-sub">${new Date(e.ts).toLocaleString()} · ${e.damage}%</div></div><div class="wl-loot">🪙${fmt(e.gold)}<br>🧪${fmt(e.elixir)}</div></div>`;
+      return `<div class="wl-row"><div class="wl-stars">${stars}</div><div class="wl-meta"><div class="wl-title">${e.stars>=3?'VILLAGE DESTROYED':e.stars>=1?'RAID COMPLETE':'DEFEAT'}</div><div class="wl-sub">${new Date(e.ts).toLocaleString()} · ${e.damage}%</div></div><div class="wl-loot"><i class="dot dot-gold"></i>${fmt(e.gold)}<br><i class="dot dot-elixir"></i>${fmt(e.elixir)}</div></div>`;
     }).join("");
   }
   wlRaids.textContent = STATE.log.length;
@@ -2462,14 +2691,18 @@ function update(dt) {
   for (const b of STATE.buildings) if (b.buildT > 0) b.buildT -= dt;
   for (const w of STATE.walls) if (w.buildT > 0) w.buildT -= dt;
 
+  tickSmoke(dt);
+
   // sim
   if (STATE.phase === "battle" || STATE.phase === "result" || (AUTO && STATE.phase === "battle")) {
-    for (const t of STATE.troops) updateTroop(t, dt);
+    for (const t of STATE.troops) {
+      const px = t.gx, py = t.gy;
+      updateTroop(t, dt);
+      t.moving = (t.gx - px) * (t.gx - px) + (t.gy - py) * (t.gy - py) > 1e-7;
+    }
     for (const b of STATE.buildings) if (b.isDefense) updateDefense(b, dt);
     updateClanCastle(dt);
     updateProjectiles(dt);
-    updateParticles(dt);
-    updateFloaters(dt);
     // remove dead troops
     STATE.troops = STATE.troops.filter(t => !t.dead);
     // check battle end: no ATTACKER troops and no remaining deploys (defenders alone don't prolong a raid)
@@ -2480,6 +2713,8 @@ function update(dt) {
     }
     if (AUTO) autoChiefStep(dt);
   }
+  updateParticles(dt);
+  updateFloaters(dt);
 
   // camera shake
   if (STATE.shake > 0.1) {
@@ -2539,6 +2774,7 @@ function updateAmbient(t, dt) {
     t.wanderT = rand(1.6, 3.6);
   }
   const dx = t.wx - t.gx, dy = t.wy - t.gy, d = Math.hypot(dx, dy) || 1;
+  t.moving = d > 0.3;
   if (d > 0.3) {
     const step = 1.25 * dt;
     t.gx += dx / d * step; t.gy += dy / d * step;
@@ -2564,6 +2800,7 @@ function updateCinematic(dt) {
   else if (!cap && C.cap) { C.cap = ""; cinemCap.style.opacity = "0"; }
   // ambient life + torch flicker
   for (const t of STATE.troops) if (t.ambient) updateAmbient(t, dt);
+  tickSmoke(dt);
   updateParticles(dt);
   if (p >= 1) endCinematic();
 }
