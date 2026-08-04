@@ -1,6 +1,9 @@
 node_modules
 shots
 verify.js
+test-run.js
+test-cinematic.js
+test-trace.js
 package.json
 package-lock.json
 .claude

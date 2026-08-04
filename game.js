@@ -282,7 +282,8 @@ const Audio = (() => {
 /* keep Audio referenced so minifiers don't drop it; used globally below */
 window.__audio = Audio;
 /* ═════════════════════════════ SPRITE FACTORY — all art drawn on offscreen canvases ═════════════════════════════ */
-function makeSprite(w, h, drawFn, scale = 1) {
+const SPR_RES = 2;   // sprites are prerendered at 2x so they stay crisp on retina
+function makeSprite(w, h, drawFn, scale = SPR_RES) {
   const c = document.createElement("canvas");
   c.width = Math.ceil(w * scale); c.height = Math.ceil(h * scale);
   const cx = c.getContext("2d");
@@ -889,8 +890,18 @@ function buildVillage() {
   for (let i = 7; i <= 8; i++) { addWall(11, i); addWall(11, 16 - (i - 6)); }
   for (let i = 7; i <= 8; i++) { addWall(i, 11); addWall(16 - (i - 6), 11); }
 
-  // mark deploy-invalid where building/wall occupy
-  for (let x = LO; x < HI; x++) for (let y = LO; y < HI; y++) if (OCC[x][y]) DEPLOY_OK[x][y] = 0;
+  // deploy legality: flood-fill from the map edge — only exterior grass is deployable,
+  // so troops can't spawn inside wall compartments (CoC rules)
+  for (let x = LO; x < HI; x++) for (let y = LO; y < HI; y++) DEPLOY_OK[x][y] = 0;
+  {
+    const q = [];
+    const pushIf = (x, y) => {
+      if (inBounds(x, y) && !OCC[x][y] && !DEPLOY_OK[x][y]) { DEPLOY_OK[x][y] = 1; q.push([x, y]); }
+    };
+    for (let x = LO; x < HI; x++) { pushIf(x, LO); pushIf(x, HI - 1); }
+    for (let y = LO; y < HI; y++) { pushIf(LO, y); pushIf(HI - 1, y); }
+    while (q.length) { const [x, y] = q.pop(); pushIf(x + 1, y); pushIf(x - 1, y); pushIf(x, y + 1); pushIf(x, y - 1); }
+  }
 
   // troop counts + housing
   STATE.housingCap = TROOP_DEFS.reduce((s, t) => s + t.housing * t.count, 0);
@@ -911,7 +922,7 @@ function buildTray() {
     btn.innerHTML = `
       <canvas width="42" height="42"></canvas>
       <div class="troop-name">${t.name.toUpperCase()}</div>
-      <div class="troop-cost">⚔${t.dps}</div>
+      <div class="troop-cost">${t.dps ? "⚔" + t.dps : "✚" + t.heal}</div>
       <div class="troop-count" data-c="${t.key}">${t.count}</div>`;
     const c = btn.querySelector("canvas");
     const cx = c.getContext("2d");
@@ -1361,7 +1372,8 @@ function updateDefense(b, dt) {
         if (tgt.hp <= 0) killTroop(tgt);
       }
       spawnParticles(tgt.gx, tgt.gy, 1, "#D68CFF", 0.2, "spark");
-      if (b.cooldown < -0.01) Audio.SFX.beam();
+      b.beamTick = (b.beamTick || 0) + 1;
+      if (b.beamTick % 4 === 1) Audio.SFX.beam();
     }
     return;
   }
@@ -1516,7 +1528,7 @@ function updateFloaters(dt) {
 }
 function flash(a) {
   if (REDUCED) return;
-  flashEl.style.opacity = a;
+  /* never set inline opacity — the animation reverting to it left a stuck white wash */
   flashEl.animate([{ opacity: a }, { opacity: 0 }], { duration: 220, easing: "ease-out" });
 }
 
@@ -1575,7 +1587,7 @@ function fitCamera() {
   // fit the village diamond into the area between HUD and tray
   const topPad = 64, botPad = 150, sidePad = 30;
   const availW = VW - sidePad * 2, availH = VH - topPad - botPad;
-  const span = HI - LO;
+  const span = GRID + 4;   // frame the village + a deploy apron, not the whole grass field
   const worldW = span * TW, worldH = span * TH + 90;   // +building height headroom
   let z = Math.min(availW / worldW, availH / worldH);
   z = clamp(z, 0.5, 1.35);
@@ -1594,12 +1606,12 @@ function isoCenterScreen(z) {
 /* ═════════════════════════════ RENDER ═════════════════════════════ */
 function drawSprite(spr, sx, sy, anchorX = 0.5, anchorY = 1, scale = STATE.cam.z, alpha = 1) {
   if (!spr) return;
-  const ow = spr.width / (DPR) * scale, oh = spr.height / (DPR) * scale;
+  const ow = spr.width / SPR_RES * scale, oh = spr.height / SPR_RES * scale;
   ctx.globalAlpha = alpha;
   ctx.drawImage(spr, 0, 0, spr.width, spr.height, sx - ow * anchorX, sy - oh * anchorY, ow, oh);
   ctx.globalAlpha = 1;
 }
-function spriteSize(spr) { return { w: spr.width / DPR, h: spr.height / DPR }; }
+function spriteSize(spr) { return { w: spr.width / SPR_RES, h: spr.height / SPR_RES }; }
 
 function render() {
   const c = STATE.cam;
@@ -1635,17 +1647,33 @@ function render() {
   }
 
   ctx.save();
-  ctx.translate(sx, sy);
+  /* iso() already carries cam.ox/oy — translate by shake ONLY, or everything doubles the offset */
+  ctx.translate(c.shakeX, c.shakeY);
 
-  // ground
+  // ground — its grid-origin pixel must land exactly on iso(0,0)
   const go = groundOriginScreen();
   const gs = c.z;
   const gw = groundW * gs, ghh = groundH * gs;
   ctx.drawImage(groundCanvas, 0, 0, groundCanvas.width, groundCanvas.height,
-    go.x * gs - gw / 2, go.y * gs - 30 * gs, gw, ghh);
+    c.ox - go.x * gs, c.oy - go.y * gs, gw, ghh);
 
   // defense range rings (faint)
   drawDefenseRanges();
+
+  // deploy guide: while aiming, dim the forbidden interior so the legal apron reads instantly
+  if ((STATE.phase === "battle" || STATE.phase === "scout") && STATE.selected && deployCursor.classList.contains("on")) {
+    const a = iso(5, 5), b2 = iso(18, 5), c2 = iso(18, 18), d2 = iso(5, 18);
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = "#FF4D5E";
+    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b2.x, b2.y); ctx.lineTo(c2.x, c2.y); ctx.lineTo(d2.x, d2.y); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = 0.5;
+    ctx.setLineDash([10, 8]);
+    ctx.strokeStyle = "#FFFFFF"; ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
 
   // build the depth-sorted render list
   const list = [];
@@ -1958,18 +1986,22 @@ function buildingAt(gx, gy) {
 let pointerDownAt = null, didDrag = false;
 canvas.addEventListener("pointerdown", (e) => {
   Audio.resume();
-  if (STATE.phase !== "battle" && STATE.phase !== "scout") return;
+  if (STATE.phase !== "battle" && STATE.phase !== "scout" && STATE.phase !== "result") return;
   const { x, y } = pointerPos(e);
   pointerDownAt = { x, y, t: now() };
   didDrag = false;
   const g = screenToGrid(x, y);
   STATE.pointer.gx = g.gx; STATE.pointer.gy = g.gy;
-  // tap building -> info
+  // tap building -> info. During battle, intel is LOCKED until you destroy the building —
+  // you loot the resume by raiding it. Scout phase & destroyed buildings always open.
   const b = buildingAt(g.gx, g.gy);
   if (b) {
-    showInfo(b.id);
-    // TH triple-tap secret
     if (b.type === "th") thTap();
+    if (STATE.phase === "battle" && !b.destroyed && !b.decor) {
+      if (!STATE._intelHinted) { STATE._intelHinted = true; addToast("🔒", "Intel is inside the buildings — destroy them to loot it"); }
+      return;
+    }
+    showInfo(b.id);
     return;
   }
 });
@@ -1978,12 +2010,14 @@ canvas.addEventListener("pointermove", (e) => {
   STATE.pointer.x = x; STATE.pointer.y = y; STATE.pointer.over = true;
   const g = screenToGrid(x, y);
   STATE.pointer.gx = g.gx; STATE.pointer.gy = g.gy;
-  // deploy cursor follow
+  // deploy cursor follow + validity tint
   if (deployCursor.classList.contains("on")) {
     deployCursor.style.left = x + "px"; deployCursor.style.top = y + "px";
+    const ix = Math.round(g.gx), iy = Math.round(g.gy);
+    deployCursor.classList.toggle("invalid", !inBounds(ix, iy) || !DEPLOY_OK[ix][iy]);
   }
   if (pointerDownAt && dist(x, y, pointerDownAt.x, pointerDownAt.y) > 14) didDrag = true;
-  if (pointerDownAt && didDrag && STATE.phase === "battle") {
+  if (pointerDownAt && didDrag && (STATE.phase === "battle" || STATE.phase === "scout")) {
     // drag-deploy: drop troops along the drag
     tryDeployAt(g.gx, g.gy, true);
   }
@@ -1994,21 +2028,26 @@ canvas.addEventListener("pointerup", (e) => {
   if (!pointerDownAt) return;
   const { x, y } = pointerPos(e);
   const g = screenToGrid(x, y);
-  if (!didDrag && STATE.phase === "battle") tryDeployAt(g.gx, g.gy, false);
+  if (!didDrag && (STATE.phase === "battle" || STATE.phase === "scout")) tryDeployAt(g.gx, g.gy, false);
   pointerDownAt = null;
 });
 canvas.addEventListener("pointerleave", () => { STATE.pointer.over = false; deployCursor.classList.remove("on"); });
 
+let lastDragDeploy = 0;
 function tryDeployAt(gx, gy, drag) {
-  if (STATE.phase !== "battle") return;
+  /* deploys are legal in scout too — the first deploy IS what starts the battle */
+  if (STATE.phase !== "battle" && STATE.phase !== "scout") return;
   const sel = STATE.selected && TROOP_DEFS.find(t => t.key === STATE.selected);
   if (!sel) return;
   if (STATE.countdown[sel.key] <= 0 || STATE.housingUsed + sel.housing > STATE.housingCap) return;
+  if (drag && now() - lastDragDeploy < 140) return;
   const ix = Math.round(gx), iy = Math.round(gy);
-  if (!inBounds(ix, iy) || OCC[ix][iy]) return;
-  deployTroop(sel, gx, gy);
+  if (!inBounds(ix, iy) || !DEPLOY_OK[ix][iy]) {
+    if (!drag && !OCC[ix] ?. [iy]) addToast("⚠️", "Deploy on the grass outside the walls, chief");
+    return;
+  }
+  if (deployTroop(sel, gx, gy)) lastDragDeploy = now();
   if (!STATE.timerRunning) startBattle();
-  if (drag) { /* limit rate */ }
 }
 
 /* keyboard secrets */
@@ -2096,7 +2135,7 @@ function gemRain() {
     const g = document.createElement("div"); g.className = "egg-sprite";
     g.style.cssText = `width:${rand(18,34)|0}px;left:${rand(4,94).toFixed(1)}vw;top:-60px`;
     g.innerHTML = ""; const c = document.createElement("canvas"); c.width = 40; c.height = 40;
-    c.getContext("2d").drawImage(SPR.gem, 0, 0); g.appendChild(c); eggLayer.appendChild(g);
+    c.getContext("2d").drawImage(SPR.gem, 0, 0, 40, 40); g.appendChild(c); eggLayer.appendChild(g);
     g.animate([{ transform: `translateY(0) rotate(0)`, opacity: 1 }, { transform: `translateY(${innerHeight + 120}px) rotate(${rand(-260,260)|0}deg)`, opacity: .9 }],
       { duration: rand(1200, 2400), delay: Math.random() * 0.5, easing: "cubic-bezier(.3,.1,.6,1)" });
     setTimeout(() => g.remove(), 2900);
@@ -2197,6 +2236,7 @@ function endBattle(reason) {
   // trophies
   const trophies = stars * 7 + Math.floor(STATE.damage / 10) - (3 - stars) * 2;
   const entry = { stars, damage: Math.round(STATE.damage), gold: STATE.gold, elixir: STATE.elixir, trophies, ts: Date.now(), win: stars >= 1 };
+  STATE._lastEntry = entry;
   STATE.log.unshift(entry);
   if (STATE.log.length > 20) STATE.log.pop();
   saveLog();
@@ -2230,6 +2270,31 @@ function doRaidAgain() {
 }
 raidAgain.addEventListener("click", doRaidAgain);
 resultAlly.addEventListener("click", () => openAlliance());
+
+/* challenge-a-friend: encode the raid into a link; ?ch= shows a beat-that banner */
+$("#shareBtn").addEventListener("click", async () => {
+  const e = STATE._lastEntry;
+  if (!e) return;
+  const url = `${location.origin}${location.pathname}?ch=${e.stars}.${e.damage}.${Math.max(-99, e.trophies)}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    addToast("⚔️", "Challenge link copied — send it to a rival chief");
+  } catch {
+    prompt("Copy your challenge link:", url);
+  }
+});
+function applyChallenge() {
+  const ch = PARAMS.get("ch");
+  if (!ch) return;
+  const [s, d, tr] = ch.split(".").map(Number);
+  if (!Number.isFinite(s) || !Number.isFinite(d)) return;
+  const line = $(".scout-line");
+  if (line) line.innerHTML =
+    `<b style="color:var(--gold-glow)">A rival chief scored ${clamp(s,0,3)}★ · ${clamp(d,0,100)}% destruction${Number.isFinite(tr) ? ` · ${tr >= 0 ? "+" : ""}${clamp(tr,-99,99)}🏆` : ""}. Beat that.</b><br>` +
+    line.innerHTML;
+  addToast("📜", "Challenge received — three-star to answer it");
+}
+applyChallenge();
 
 function openAlliance() {
   allyEl.classList.add("on"); allyEl.setAttribute("aria-hidden", "false");
@@ -2302,9 +2367,9 @@ function autoChiefStep(dt) {
 }
 function autoPos(side, i) {
   const spread = () => ({ gx: rand(1, GRID - 1), gy: rand(1, GRID - 1) });
-  if (side === "spread") { let p; for (let k=0;k<20;k++){p=spread();const ix=Math.round(p.gx),iy=Math.round(p.gy);if(inBounds(ix,iy)&&!OCC[ix][iy])return p;} return spread(); }
-  // edge deploy near walls
-  const edges = { tl: [6.5, 6.5], tr: [15.5, 6.5], bl: [6.5, 15.5], br: [15.5, 15.5] };
+  if (side === "spread") { let p; for (let k=0;k<30;k++){p=spread();const ix=Math.round(p.gx),iy=Math.round(p.gy);if(inBounds(ix,iy)&&DEPLOY_OK[ix][iy])return p;} return spread(); }
+  // edge deploy just OUTSIDE the wall ring (walls sit at 6..16)
+  const edges = { tl: [4.5, 4.5], tr: [17.5, 4.5], bl: [4.5, 17.5], br: [17.5, 17.5] };
   const e = edges[side] || edges.tl;
   return { gx: e[0] + rand(-1, 1), gy: e[1] + rand(-1, 1) };
 }
@@ -2519,6 +2584,8 @@ window.addEventListener("load", () => { /* sprites already built */ });
 
 /* mark ready for the verify harness */
 window.__ready = true;
+/* debug/test access to internals */
+window.__game = { STATE, iso, screenToGrid, fitCamera, get OCC() { return OCC; }, get DEPLOY_OK() { return DEPLOY_OK; }, deployTroop, TROOP_DEFS, endBattle, groundOriginScreen, get VW() { return VW; }, get groundW() { return groundW; } };
 
 boot();
 requestAnimationFrame(loop);

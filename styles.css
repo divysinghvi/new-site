@@ -90,6 +90,8 @@ svg{display:block}
   content:"";position:absolute;inset:0;border-radius:50%;
   border:2.5px dashed var(--gold);animation:spin 3s linear infinite;
 }
+.deploy-cursor.invalid::before{border-color:var(--danger)}
+.deploy-cursor.invalid::after{background:radial-gradient(circle,rgba(255,77,94,.5),transparent 70%)}
 .deploy-cursor::after{
   content:"";position:absolute;inset:11px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,197,61,.5),transparent 70%);
@@ -305,6 +307,7 @@ svg{display:block}
 .r-btn:active{transform:translateY(2px)}
 .r-primary{color:#fff;background:linear-gradient(180deg,#67B94C,#3D8A2E);border-color:#276018;box-shadow:0 6px 0 #276018}
 .r-ally{color:#fff;background:linear-gradient(180deg,#5D8DF6,#2D57C8);border-color:#16306B;box-shadow:0 6px 0 #16306B}
+.r-share{color:#4A3116;background:linear-gradient(180deg,var(--gold-glow),var(--gold-deep));border-color:#9A6A0E;box-shadow:0 6px 0 #9A6A0E}
 .result-hint{margin-top:18px;font-size:10.5px;color:var(--text-dim)}
 
 /* ─────────── war log ─────────── */
@@ -354,6 +357,8 @@ svg{display:block}
 .footer{margin-top:12vh;padding:5vh 6vw 6vh;text-align:center;border-top:2px dashed rgba(56,41,19,.3);font-size:12.5px;color:#6B5637;line-height:1.6}
 .footer-hint{margin-top:12px;font-size:11px;letter-spacing:.04em;color:#A0722B}
 .footer-hint b{color:#7A5000}
+.story-link{color:#7A5000;font-weight:800}
+.story-link b{color:#5C3D00}
 
 /* ─────────── toasts, eggs ─────────── */
 .toast-zone{position:fixed;right:16px;bottom:16px;z-index:90;display:flex;flex-direction:column;gap:9px;align-items:flex-end;pointer-events:none}
