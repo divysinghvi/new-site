@@ -451,6 +451,13 @@ svg{display:block}
   .tray-army{min-width:74px}
   .info{width:92vw}
 }
+@media (max-width:560px){
+  .hud-phase{display:none}
+  .hud-damage{min-width:30px}
+  .hud-btn-label{display:none}
+  .hud-btn-profile{width:32px;padding:0}
+  .hud-right{gap:6px}
+}
 @media (max-height:560px){
   .scout-line{display:none}
   .scout-cta{margin-top:2vh}

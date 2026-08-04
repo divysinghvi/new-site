@@ -510,20 +510,40 @@ SPR.cannon = defenseSprite((cx, w, h) => {
   cx.restore();
 });
 SPR.archer = defenseSprite((cx, w, h) => {
-  shadow(cx, w / 2, h - 6, 32, 8);
-  // wood post
-  const wg = cx.createLinearGradient(0, 30, 0, 100);
-  wg.addColorStop(0, "#9A6A3C"); wg.addColorStop(1, "#5E3D20");
+  shadow(cx, w / 2, h - 6, 34, 9);
+  // four splayed legs
+  cx.strokeStyle = "#33210E"; cx.lineWidth = 7; cx.lineCap = "round";
+  cx.beginPath(); cx.moveTo(34, 44); cx.lineTo(24, 98); cx.moveTo(62, 44); cx.lineTo(72, 98); cx.stroke();
+  cx.strokeStyle = "#5E3D20"; cx.lineWidth = 5.5;
+  cx.beginPath(); cx.moveTo(34, 44); cx.lineTo(24, 98); cx.moveTo(62, 44); cx.lineTo(72, 98); cx.stroke();
+  cx.strokeStyle = "#4A3116"; cx.lineWidth = 5;
+  cx.beginPath(); cx.moveTo(44, 46); cx.lineTo(40, 98); cx.moveTo(52, 46); cx.lineTo(56, 98); cx.stroke();
+  // cross-braces
+  cx.strokeStyle = "#4A3116"; cx.lineWidth = 3;
+  cx.beginPath(); cx.moveTo(28, 78); cx.lineTo(68, 72); cx.moveTo(30, 60); cx.lineTo(66, 64); cx.stroke();
+  // plank platform with rim
+  const wg = cx.createLinearGradient(0, 34, 0, 50);
+  wg.addColorStop(0, "#A87844"); wg.addColorStop(1, "#6B4A2B");
   cx.fillStyle = wg; cx.strokeStyle = "#33210E"; cx.lineWidth = 3;
-  roundRect(cx, 38, 28, 20, 70, 6); cx.fill(); cx.stroke();
-  stoneBase(cx, 28, 18, 40, 20, true);
-  // archer head
+  roundRect(cx, 22, 34, 52, 14, 5); cx.fill(); cx.stroke();
+  cx.strokeStyle = "rgba(51,33,14,.55)"; cx.lineWidth = 1.5;
+  for (let x = 32; x < 70; x += 10) { cx.beginPath(); cx.moveTo(x, 36); cx.lineTo(x, 46); cx.stroke(); }
+  // parapet
+  cx.fillStyle = "#8A5B33"; cx.strokeStyle = "#33210E"; cx.lineWidth = 2.5;
+  roundRect(cx, 20, 28, 10, 12, 3); cx.fill(); cx.stroke();
+  roundRect(cx, 66, 28, 10, 12, 3); cx.fill(); cx.stroke();
+  // archeress on top: hood, body, bow drawn back
+  cx.fillStyle = "#3E9C6E"; cx.strokeStyle = "#1F6B47"; cx.lineWidth = 2.5;
+  roundRect(cx, 40, 18, 16, 18, 6); cx.fill(); cx.stroke();
   cx.fillStyle = "#F2C89B"; cx.strokeStyle = "#8A5B33"; cx.lineWidth = 2;
-  cx.beginPath(); cx.arc(48, 10, 7, 0, TAU); cx.fill(); cx.stroke();
-  // bow
-  cx.strokeStyle = "#E8EFFA"; cx.lineWidth = 2.5; cx.noFill = true;
-  cx.beginPath(); cx.arc(60, 14, 9, -1.2, 1.2); cx.stroke();
-  cx.beginPath(); cx.moveTo(48, 12); cx.lineTo(62, 14); cx.stroke();
+  cx.beginPath(); cx.arc(48, 12, 7.5, 0, TAU); cx.fill(); cx.stroke();
+  cx.fillStyle = "#E36BAE"; cx.strokeStyle = "#A83A78"; cx.lineWidth = 2;
+  cx.beginPath(); cx.arc(48, 9.5, 7.5, Math.PI, 0); cx.fill(); cx.stroke();
+  cx.strokeStyle = "#E8EFFA"; cx.lineWidth = 2.5;
+  cx.beginPath(); cx.arc(62, 18, 11, -1.25, 1.25); cx.stroke();
+  cx.beginPath(); cx.moveTo(56, 8); cx.lineTo(56, 28); cx.stroke();
+  cx.strokeStyle = "#9A6A3C"; cx.lineWidth = 2;
+  cx.beginPath(); cx.moveTo(50, 18); cx.lineTo(70, 18); cx.stroke();
 });
 SPR.xbow = defenseSprite((cx, w, h) => {
   shadow(cx, w / 2, h - 6, 34, 9);
@@ -1857,8 +1877,11 @@ function render() {
   }
 
   ctx.save();
-  /* iso() already carries cam.ox/oy — translate by shake ONLY, or everything doubles the offset */
-  ctx.translate(c.shakeX, c.shakeY);
+  /* iso() already carries cam.ox/oy — translate by shake ONLY, or everything doubles the offset.
+     During scout the camera breathes: a slow drift so the backdrop never feels like a screenshot. */
+  let dfx = 0, dfy = 0;
+  if (STATE.phase === "scout" && !REDUCED) { dfx = Math.sin(now() / 2400) * 9; dfy = Math.cos(now() / 3100) * 5; }
+  ctx.translate(c.shakeX + dfx, c.shakeY + dfy);
 
   // ground — its grid-origin pixel must land exactly on iso(0,0)
   const go = groundOriginScreen();
