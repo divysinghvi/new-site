@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Divy Singhvi — Chief of the Base</title>
-<meta name="description" content="Product engineer, Kubernetes contributor, village chief. Scroll to raid the base.">
-<meta property="og:title" content="Divy Singhvi — Chief of the Base">
-<meta property="og:description" content="Strong walls. Stronger Wi-Fi. Scroll to raid.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Divy Singhvi — Three Stars (Raid the Base)</title>
+<meta name="description" content="A real-time raid on Divy Singhvi's base. Deploy the army, three-star the village, loot the engineer. Built in a browser, no assets, no mercy.">
+<meta name="theme-color" content="#10173A">
+<meta property="og:title" content="Divy Singhvi — Three Stars">
+<meta property="og:description" content="Strong walls. Stronger Wi-Fi. Now it's your raid.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z' fill='%2310173A' stroke='%23FFC53D' stroke-width='6'/%3E%3Ctext x='50' y='63' font-size='38' font-family='Arial Black' font-weight='900' fill='%23FFC53D' text-anchor='middle'%3EDS%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,570 +16,162 @@
 </head>
 <body>
 
-<!-- ══════════════ SVG ARMOURY (defs only, drawn once) ══════════════ -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <linearGradient id="gGrass" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#3F7A4C"/><stop offset="1" stop-color="#2A5233"/>
-    </linearGradient>
-    <linearGradient id="gStone" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#B7C2D6"/><stop offset="1" stop-color="#6B7793"/>
-    </linearGradient>
-    <linearGradient id="gRoof" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FF9D4D"/><stop offset="1" stop-color="#D96A1E"/>
-    </linearGradient>
-    <linearGradient id="gWood" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#9A6A3C"/><stop offset="1" stop-color="#5E3D20"/>
-    </linearGradient>
-    <linearGradient id="gGold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FFDE7A"/><stop offset="1" stop-color="#D89A1B"/>
-    </linearGradient>
-    <linearGradient id="gElixir" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#D68CFF"/><stop offset="1" stop-color="#7E2BC8"/>
-    </linearGradient>
-    <radialGradient id="gMoon" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#FFFDF4"/><stop offset=".7" stop-color="#E8EFFA"/><stop offset="1" stop-color="#C9D6EE"/>
-    </radialGradient>
-    <radialGradient id="gTorch" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="#FFD98A" stop-opacity=".9"/><stop offset="1" stop-color="#FF7A3D" stop-opacity="0"/>
-    </radialGradient>
-
-    <linearGradient id="gPurple" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#8A63D2"/><stop offset="1" stop-color="#5A34A0"/>
-    </linearGradient>
-    <linearGradient id="gRoofP" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#7A9CF5"/><stop offset="1" stop-color="#4A3FBF"/>
-    </linearGradient>
-    <linearGradient id="gCrystal" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#DFF3FF"/><stop offset="1" stop-color="#6FA4F8"/>
-    </linearGradient>
-    <linearGradient id="gBalloon" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#F06A57"/><stop offset="1" stop-color="#9E2418"/>
-    </linearGradient>
-
-    <!-- iso grass tiles (flat two-tone checker, CoC-style) -->
-    <g id="sym-tile">
-      <polygon points="64,0 128,32 64,64 0,32" fill="#3F7A4C" stroke="#1F3D27" stroke-width="2"/>
-    </g>
-    <g id="sym-tileB">
-      <polygon points="64,0 128,32 64,64 0,32" fill="#346242" stroke="#1F3D27" stroke-width="2"/>
-    </g>
-
-    <!-- TH15-style crystal wall -->
-    <g id="sym-wall2">
-      <ellipse cx="60" cy="106" rx="46" ry="10" fill="rgba(0,0,0,.28)"/>
-      <rect x="12" y="56" width="96" height="50" rx="11" fill="url(#gStone)" stroke="#39435C" stroke-width="3.5"/>
-      <polygon points="28,26 44,56 12,56" fill="url(#gCrystal)" stroke="#274B9C" stroke-width="2.5"/>
-      <polygon points="92,26 108,56 76,56" fill="url(#gCrystal)" stroke="#274B9C" stroke-width="2.5"/>
-      <polygon points="60,6 86,54 34,54" fill="url(#gCrystal)" stroke="#274B9C" stroke-width="3"/>
-      <polyline points="52,28 60,14 66,26" fill="none" stroke="#EAF6FF" stroke-width="3" opacity=".8"/>
-    </g>
-
-    <!-- balloon (air troop, ambient) -->
-    <g id="sym-balloon">
-      <ellipse cx="50" cy="40" rx="34" ry="37" fill="url(#gBalloon)" stroke="#6E1620" stroke-width="3"/>
-      <path d="M50 3 C38 20 38 60 50 77 M50 3 C62 20 62 60 50 77" fill="none" stroke="#6E1620" stroke-width="2.5" opacity=".55"/>
-      <line x1="32" y1="70" x2="42" y2="92" stroke="#33210E" stroke-width="2.5"/>
-      <line x1="68" y1="70" x2="58" y2="92" stroke="#33210E" stroke-width="2.5"/>
-      <rect x="38" y="90" width="24" height="17" rx="4" fill="url(#gWood)" stroke="#33210E" stroke-width="2.5"/>
-    </g>
-
-    <!-- barbarian (original, yelling) -->
-    <g id="sym-barb">
-      <ellipse cx="45" cy="94" rx="26" ry="7" fill="rgba(0,0,0,.25)"/>
-      <rect x="64" y="10" width="10" height="44" rx="4" fill="#C9D6EE" stroke="#525E78" stroke-width="2.5" transform="rotate(14 64 10)"/>
-      <rect x="58" y="50" width="20" height="8" rx="3" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="2" transform="rotate(14 58 50)"/>
-      <rect x="30" y="52" width="30" height="34" rx="9" fill="#B98A4C" stroke="#7A5230" stroke-width="3"/>
-      <rect x="28" y="72" width="34" height="16" rx="5" fill="#6B4A2B" stroke="#4A3116" stroke-width="2.5"/>
-      <circle cx="45" cy="34" r="19" fill="#F2C89B" stroke="#B98A4C" stroke-width="3"/>
-      <path d="M27 28 L33 12 L39 24 L45 8 L51 24 L57 12 L63 28 Z" fill="#FFD23F" stroke="#C99A12" stroke-width="2.5"/>
-      <path d="M36 44 q9 6 18 0" fill="none" stroke="#8A5B33" stroke-width="4" stroke-linecap="round"/>
-      <circle cx="38" cy="33" r="3.4" fill="#131A12"/><circle cx="52" cy="33" r="3.4" fill="#131A12"/>
-    </g>
-
-    <!-- gold-capped wall block -->
-    <g id="sym-wall">
-      <rect x="8" y="26" width="48" height="34" rx="6" fill="url(#gStone)" stroke="#39435C" stroke-width="2.5"/>
-      <rect x="4" y="12" width="56" height="20" rx="7" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="2.5"/>
-    </g>
-
-    <!-- town hall (TH15-style: stone base, purple keep, crystal-blue roof, gold trim) -->
-    <g id="sym-townhall">
-      <ellipse cx="100" cy="184" rx="82" ry="13" fill="#1C3A25" opacity=".85"/>
-      <rect x="26" y="116" width="148" height="66" rx="10" fill="url(#gStone)" stroke="#39435C" stroke-width="3.5"/>
-      <path d="M78 182 v-32 a22 22 0 0 1 44 0 v32 Z" fill="#241340" stroke="#FFC53D" stroke-width="4"/>
-      <rect x="38" y="130" width="24" height="17" rx="4" fill="#9FE8FF" stroke="#2D57C8" stroke-width="2.5"/>
-      <rect x="138" y="130" width="24" height="17" rx="4" fill="#9FE8FF" stroke="#2D57C8" stroke-width="2.5"/>
-      <rect x="42" y="82" width="116" height="38" rx="8" fill="url(#gPurple)" stroke="#31184F" stroke-width="3.5"/>
-      <rect x="88" y="90" width="24" height="20" rx="4" fill="#FFDE7A" stroke="#9A6A0E" stroke-width="2.5"/>
-      <polygon points="100,6 178,88 22,88" fill="url(#gRoofP)" stroke="#31184F" stroke-width="3.5"/>
-      <polygon points="100,30 150,84 50,84" fill="none" stroke="#FFC53D" stroke-width="4"/>
-      <polygon points="100,44 128,82 72,82" fill="#9FE8FF" opacity=".25"/>
-      <path d="M104 6 L134 14 L104 23 Z" fill="#FF4D5E" stroke="#B02737" stroke-width="2"/>
-      <circle cx="100" cy="10" r="8" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="2.5"/>
-    </g>
-
-    <!-- cannon tower -->
-    <g id="sym-cannon">
-      <ellipse cx="60" cy="104" rx="44" ry="14" fill="#26492F"/>
-      <rect x="28" y="52" width="64" height="52" rx="10" fill="url(#gStone)" stroke="#39435C" stroke-width="3"/>
-      <ellipse cx="60" cy="52" rx="32" ry="12" fill="#7E8AA6" stroke="#39435C" stroke-width="3"/>
-      <rect x="52" y="18" width="44" height="20" rx="10" fill="#3B4254" stroke="#22283A" stroke-width="3" transform="rotate(-18 52 28)"/>
-      <circle cx="52" cy="40" r="13" fill="#5E3D20" stroke="#33210E" stroke-width="3"/>
-    </g>
-
-    <!-- archer tower -->
-    <g id="sym-archer">
-      <ellipse cx="60" cy="106" rx="40" ry="12" fill="#26492F"/>
-      <rect x="38" y="40" width="44" height="66" rx="8" fill="url(#gWood)" stroke="#33210E" stroke-width="3"/>
-      <rect x="30" y="28" width="60" height="18" rx="6" fill="url(#gStone)" stroke="#39435C" stroke-width="3"/>
-      <circle cx="60" cy="16" r="9" fill="#F2C89B" stroke="#8A5B33" stroke-width="2.5"/>
-      <path d="M74 8 q10 8 0 18" fill="none" stroke="#E8EFFA" stroke-width="3"/>
-    </g>
-
-    <!-- crossbow tower -->
-    <g id="sym-xbow">
-      <ellipse cx="60" cy="106" rx="42" ry="13" fill="#26492F"/>
-      <rect x="30" y="66" width="60" height="40" rx="9" fill="url(#gStone)" stroke="#39435C" stroke-width="3"/>
-      <path d="M22 46 Q60 14 98 46" fill="none" stroke="#8A5B33" stroke-width="7" stroke-linecap="round"/>
-      <line x1="24" y1="47" x2="96" y2="47" stroke="#E8EFFA" stroke-width="2.5"/>
-      <rect x="54" y="34" width="12" height="34" rx="4" fill="#5E3D20" stroke="#33210E" stroke-width="2.5"/>
-    </g>
-
-    <!-- beacon (elixir crystal) tower -->
-    <g id="sym-beacon">
-      <ellipse cx="60" cy="106" rx="42" ry="13" fill="#26492F"/>
-      <path d="M36 106 L48 56 h24 L84 106 Z" fill="url(#gStone)" stroke="#39435C" stroke-width="3"/>
-      <polygon points="60,8 78,42 60,58 42,42" fill="url(#gElixir)" stroke="#5E1B96" stroke-width="3"/>
-      <circle cx="60" cy="36" r="26" fill="url(#gTorch)" opacity=".8"/>
-    </g>
-
-    <!-- gold storage -->
-    <g id="sym-goldstore">
-      <ellipse cx="60" cy="104" rx="44" ry="13" fill="#26492F"/>
-      <rect x="22" y="84" width="76" height="20" rx="6" fill="url(#gWood)" stroke="#33210E" stroke-width="3"/>
-      <rect x="30" y="62" width="60" height="24" rx="8" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="3"/>
-      <rect x="36" y="40" width="48" height="24" rx="8" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="3"/>
-      <rect x="42" y="20" width="36" height="22" rx="8" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="3"/>
-    </g>
-
-    <!-- elixir storage -->
-    <g id="sym-elixirstore">
-      <ellipse cx="60" cy="106" rx="40" ry="12" fill="#26492F"/>
-      <path d="M34 100 a26 30 0 1 1 52 0 Z" fill="#2A1840" stroke="#5E1B96" stroke-width="3"/>
-      <path d="M37 96 a23 26 0 1 1 46 0 Z" fill="url(#gElixir)" opacity=".9"/>
-      <rect x="48" y="20" width="24" height="16" rx="5" fill="url(#gWood)" stroke="#33210E" stroke-width="3"/>
-      <rect x="52" y="34" width="16" height="14" fill="#3B2A12"/>
-    </g>
-
-    <!-- builder hut -->
-    <g id="sym-hut">
-      <ellipse cx="60" cy="102" rx="40" ry="12" fill="#26492F"/>
-      <rect x="30" y="60" width="60" height="42" rx="7" fill="url(#gWood)" stroke="#33210E" stroke-width="3"/>
-      <polygon points="60,22 98,64 22,64" fill="url(#gRoof)" stroke="#8A3D0F" stroke-width="3"/>
-      <rect x="50" y="76" width="20" height="26" rx="4" fill="#33210E"/>
-    </g>
-
-    <!-- pine tree -->
-    <g id="sym-tree">
-      <ellipse cx="40" cy="96" rx="26" ry="8" fill="#20402A"/>
-      <rect x="35" y="78" width="10" height="18" fill="#5E3D20"/>
-      <polygon points="40,6 66,50 14,50" fill="#2F6039" stroke="#1F3D27" stroke-width="2.5"/>
-      <polygon points="40,26 72,78 8,78" fill="#387144" stroke="#1F3D27" stroke-width="2.5"/>
-    </g>
-
-    <!-- gem -->
-    <g id="sym-gem">
-      <polygon points="20,2 38,14 30,38 10,38 2,14" fill="#59E4E0" stroke="#1E9C99" stroke-width="2.5"/>
-      <polyline points="2,14 20,20 38,14" fill="none" stroke="#BFF8F6" stroke-width="2"/>
-      <line x1="20" y1="20" x2="20" y2="38" stroke="#1E9C99" stroke-width="2"/>
-    </g>
-
-    <!-- goblin (original, cheeky) -->
-    <g id="sym-goblin">
-      <ellipse cx="40" cy="74" rx="16" ry="12" fill="#3E9C3A" stroke="#256B22" stroke-width="2.5"/>
-      <circle cx="40" cy="42" r="22" fill="#4FB24A" stroke="#256B22" stroke-width="3"/>
-      <polygon points="14,38 2,20 26,28" fill="#4FB24A" stroke="#256B22" stroke-width="2.5"/>
-      <polygon points="66,38 78,20 54,28" fill="#4FB24A" stroke="#256B22" stroke-width="2.5"/>
-      <circle cx="32" cy="40" r="4.5" fill="#131A12"/>
-      <circle cx="48" cy="40" r="4.5" fill="#131A12"/>
-      <path d="M30 52 q10 8 20 0" fill="none" stroke="#131A12" stroke-width="3" stroke-linecap="round"/>
-      <rect x="58" y="58" width="26" height="16" rx="4" fill="url(#gGold)" stroke="#9A6A0E" stroke-width="2.5" transform="rotate(12 58 58)"/>
-    </g>
-
-    <!-- hog + rider (original silhouette) -->
-    <g id="sym-hog">
-      <ellipse cx="70" cy="64" rx="44" ry="26" fill="#8A5B33" stroke="#5E3D20" stroke-width="3"/>
-      <circle cx="116" cy="56" r="18" fill="#9A6A3C" stroke="#5E3D20" stroke-width="3"/>
-      <ellipse cx="126" cy="60" rx="7" ry="5" fill="#C98F5B"/>
-      <polygon points="104,42 96,26 112,34" fill="#9A6A3C" stroke="#5E3D20" stroke-width="2.5"/>
-      <rect x="36" y="84" width="10" height="18" rx="4" fill="#5E3D20"/>
-      <rect x="88" y="84" width="10" height="18" rx="4" fill="#5E3D20"/>
-      <circle cx="64" cy="18" r="12" fill="#B9773F" stroke="#5E3D20" stroke-width="3"/>
-      <rect x="52" y="28" width="24" height="18" rx="6" fill="#3B4254" stroke="#22283A" stroke-width="2.5"/>
-      <rect x="80" y="2" width="8" height="34" rx="3" fill="#5E3D20" transform="rotate(24 80 2)"/>
-    </g>
-
-    <!-- builder -->
-    <g id="sym-builder">
-      <circle cx="40" cy="34" r="16" fill="#F2C89B" stroke="#8A5B33" stroke-width="2.5"/>
-      <path d="M22 30 a18 12 0 0 1 36 0 Z" fill="#FFC53D" stroke="#9A6A0E" stroke-width="2.5"/>
-      <rect x="28" y="50" width="24" height="26" rx="7" fill="#3E6ED0" stroke="#27479C" stroke-width="2.5"/>
-      <g class="builder-arm">
-        <rect x="50" y="42" width="26" height="8" rx="4" fill="#F2C89B" stroke="#8A5B33" stroke-width="2"/>
-        <rect x="70" y="26" width="10" height="26" rx="3" fill="#5E3D20"/>
-        <rect x="62" y="18" width="26" height="14" rx="4" fill="#9AA6BC" stroke="#39435C" stroke-width="2.5"/>
-      </g>
-    </g>
-
-    <!-- star -->
-    <g id="sym-star">
-      <path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z"
-            fill="url(#gGold)" stroke="#9A6A0E" stroke-width="2.5"/>
-    </g>
-
-    <!-- the full village (composed once, used in approach + rebuild) -->
-    <g id="village-full">
-      <g opacity=".95">
-        <use href="#sym-tile" x="256" y="240" transform="scale(2.2)" />
-      </g>
-      <!-- ground: iso diamond field -->
-      <g>
-        <use href="#sym-tile" x="196" y="150"/><use href="#sym-tileB" x="260" y="182"/>
-        <use href="#sym-tileB" x="132" y="182"/><use href="#sym-tile" x="196" y="214"/>
-        <use href="#sym-tileB" x="324" y="150"/><use href="#sym-tile" x="388" y="182"/>
-        <use href="#sym-tile" x="324" y="214"/><use href="#sym-tile" x="260" y="118"/>
-        <use href="#sym-tile" x="68" y="150"/><use href="#sym-tileB" x="452" y="150"/>
-        <use href="#sym-tileB" x="132" y="118"/><use href="#sym-tile" x="388" y="118"/>
-        <use href="#sym-tileB" x="260" y="246"/><use href="#sym-tile" x="132" y="246"/>
-        <use href="#sym-tileB" x="388" y="246"/>
-      </g>
-      <!-- back walls -->
-      <g class="v-walls">
-        <use href="#sym-wall" x="150" y="118" transform="scale(.8)"/>
-        <use href="#sym-wall" x="230" y="118" transform="scale(.8)"/>
-        <use href="#sym-wall" x="310" y="118" transform="scale(.8)"/>
-        <use href="#sym-wall" x="390" y="118" transform="scale(.8)"/>
-        <use href="#sym-wall" x="470" y="118" transform="scale(.8)"/>
-        <use href="#sym-wall" x="550" y="118" transform="scale(.8)"/>
-      </g>
-      <!-- buildings -->
-      <use class="v-b v-tree1"  href="#sym-tree"        x="30"  y="120" transform="scale(1)"/>
-      <use class="v-b v-hut"   href="#sym-hut"         x="96"  y="150" transform="scale(.85)"/>
-      <use class="v-b v-cannon" href="#sym-cannon"     x="150" y="128"/>
-      <use class="v-b v-th"    href="#sym-townhall"    x="252" y="70"  transform="scale(1.06)"/>
-      <use class="v-b v-archer" href="#sym-archer"     x="470" y="120"/>
-      <use class="v-b v-gold"  href="#sym-goldstore"   x="392" y="168" transform="scale(.9)"/>
-      <use class="v-b v-elix"  href="#sym-elixirstore" x="120" y="216" transform="scale(.9)"/>
-      <use class="v-b v-hut2"  href="#sym-hut"         x="330" y="232" transform="scale(.75)"/>
-      <use class="v-b v-tree2" href="#sym-tree"        x="560" y="200" transform="scale(.9)"/>
-      <use class="v-b v-beacon" href="#sym-beacon"     x="540" y="130" transform="scale(.85)"/>
-      <!-- front walls -->
-      <g class="v-walls">
-        <use href="#sym-wall" x="120" y="306" transform="scale(.9)"/>
-        <use href="#sym-wall" x="200" y="306" transform="scale(.9)"/>
-        <use href="#sym-wall" x="280" y="306" transform="scale(.9)"/>
-        <use href="#sym-wall" x="360" y="306" transform="scale(.9)"/>
-        <use href="#sym-wall" x="440" y="306" transform="scale(.9)"/>
-        <use href="#sym-wall" x="520" y="306" transform="scale(.9)"/>
-      </g>
-      <!-- torch glows -->
-      <circle class="torch" cx="180" cy="140" r="30" fill="url(#gTorch)"/>
-      <circle class="torch" cx="520" cy="140" r="30" fill="url(#gTorch)"/>
-    </g>
-  </defs>
-</svg>
-
 <!-- ══════════════ LOADING SCREEN ══════════════ -->
 <div class="loader" id="loader" aria-hidden="true">
-  <svg class="loader-shield" viewBox="0 0 100 100"><path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/><text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text></svg>
-  <div class="loader-name">DIVY SINGHVI</div>
+  <div class="loader-sky"></div>
+  <div class="loader-sun"></div>
+  <div class="loader-ground"></div>
+  <svg class="loader-shield" viewBox="0 0 100 100" aria-hidden="true">
+    <path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/>
+    <text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text>
+  </svg>
+  <div class="loader-name">DIVY&nbsp;SINGHVI</div>
+  <div class="loader-sub">CHIEF OF THE BASE</div>
   <div class="loader-bar"><i id="loaderBar"></i></div>
-  <p class="loader-tip" id="loaderTip">Tip: scroll = raid.</p>
+  <p class="loader-tip" id="loaderTip">Tip: real chiefs know the code.</p>
+  <div class="loader-pct mono" id="loaderPct">0%</div>
 </div>
 
 <!-- ══════════════ HUD ══════════════ -->
-<header class="hud" id="hud">
-  <a class="hud-logo" href="#top" aria-label="Divy Singhvi home">
-    <svg viewBox="0 0 100 100" class="hud-shield"><path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/><text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text></svg>
+<header class="hud" id="hud" aria-hidden="true">
+  <a class="hud-logo" href="#" id="hudHome" aria-label="Divy Singhvi">
+    <svg viewBox="0 0 100 100" class="hud-shield" aria-hidden="true"><path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/><text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text></svg>
     <span class="hud-name">DIVY&nbsp;SINGHVI</span>
   </a>
-  <div class="hud-chapter">
-    <span class="hud-chapter-label" id="chapterLabel">THE APPROACH</span>
-    <span class="hud-chapter-bar"><i id="chapterBar"></i></span>
+
+  <div class="hud-center">
+    <div class="hud-phase" id="phaseLabel">SCOUTING THE BASE</div>
+    <div class="hud-timer mono" id="timer">3:00</div>
   </div>
+
   <div class="hud-right">
-    <div class="hud-loot mono"><i class="dot dot-gold"></i><span id="goldCount">0</span></div>
-    <div class="hud-loot mono"><i class="dot dot-elixir"></i><span id="elixirCount">0</span></div>
+    <div class="hud-loot mono" title="Gold looted"><i class="dot dot-gold"></i><span id="goldCount">0</span></div>
+    <div class="hud-loot mono" title="Elixir looted"><i class="dot dot-elixir"></i><span id="elixirCount">0</span></div>
     <div class="hud-stars" id="hudStars" aria-label="stars earned">
-      <svg viewBox="0 0 60 58" class="hud-star" id="star1"><use href="#sym-star"/></svg>
-      <svg viewBox="0 0 60 58" class="hud-star" id="star2"><use href="#sym-star"/></svg>
-      <svg viewBox="0 0 60 58" class="hud-star" id="star3"><use href="#sym-star"/></svg>
+      <svg viewBox="0 0 60 58" class="hud-star" id="star1"><path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z" fill="url(#sg)" stroke="#9A6A0E" stroke-width="2.5"/><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFDE7A"/><stop offset="1" stop-color="#D89A1B"/></linearGradient></defs></svg>
+      <svg viewBox="0 0 60 58" class="hud-star" id="star2"><path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z" fill="url(#sg)" stroke="#9A6A0E" stroke-width="2.5"/></svg>
+      <svg viewBox="0 0 60 58" class="hud-star" id="star3"><path d="M30 2 L37.8 20.5 L57.8 22.2 L42.6 35.4 L47.1 55 L30 44.6 L12.9 55 L17.4 35.4 L2.2 22.2 L22.2 20.5 Z" fill="url(#sg)" stroke="#9A6A0E" stroke-width="2.5"/></svg>
     </div>
     <div class="hud-damage mono"><span id="damagePct">0</span>%</div>
+    <div class="hud-gems mono" id="hudGems" title="Gems earned">💎 <span id="gemCount">0</span></div>
+    <button class="hud-btn" id="soundBtn" title="Toggle sound" aria-label="Toggle sound"><span id="soundIcon">♪</span></button>
+    <button class="hud-btn" id="logBtn" title="War log" aria-label="War log">☰</button>
+    <button class="hud-btn hud-btn-ally" id="allyBtn" title="Request alliance" aria-label="Request alliance">⚔</button>
   </div>
 </header>
 
-<main id="top">
+<!-- ══════════════ THE BATTLEFIELD ══════════════ -->
+<canvas id="world" aria-label="The village battlefield. Deploy troops by tapping the grass."></canvas>
 
-  <!-- ══════ SCENE 1 · THE APPROACH ══════ -->
-  <section class="scene" id="approach" data-chapter="THE APPROACH">
-    <div class="stage">
-      <div class="stars-layer" id="starfield" aria-hidden="true"></div>
-      <svg viewBox="0 0 100 110" class="balloon" id="balloon" aria-hidden="true"><use href="#sym-balloon"/></svg>
-      <div class="moon" aria-hidden="true"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="url(#gMoon)"/><circle cx="34" cy="38" r="7" fill="#C9D6EE" opacity=".55"/><circle cx="62" cy="60" r="10" fill="#C9D6EE" opacity=".45"/><circle cx="58" cy="30" r="4.5" fill="#C9D6EE" opacity=".5"/></svg></div>
+<div class="deploy-cursor" id="deployCursor" aria-hidden="true"></div>
 
-      <div class="village-reveal" aria-hidden="true">
-        <svg viewBox="0 0 700 440" class="village-svg"><use href="#village-full"/></svg>
-        <div class="village-ground-glow"></div>
-      </div>
+<!-- ══════════════ TROOP TRAY ══════════════ -->
+<div class="tray" id="tray" aria-hidden="true">
+  <div class="tray-army">
+    <div class="tray-label mono">ARMY · <span id="housingUsed">0</span>/<span id="housingCap">0</span></div>
+    <div class="tray-bar"><i id="housingBar"></i></div>
+  </div>
+  <div class="tray-troops" id="trayTroops"><!-- injected --></div>
+  <button class="tray-end" id="endBtn" title="End raid early">END RAID</button>
+</div>
 
-      <div class="hero-copy">
-        <p class="hero-kicker">A VILLAGE APPEARS ON THE MAP</p>
-        <h1 class="hero-title" id="heroTitle">DIVY SINGHVI</h1>
-        <p class="hero-sub">Product Engineer&ensp;·&ensp;Kubernetes Contributor&ensp;·&ensp;Town Hall 15 Chief</p>
-        <p class="hero-tag">“Strong walls. Stronger Wi-Fi.”</p>
-      </div>
+<!-- ══════════════ SCOUT BANNER / INTRO ══════════════ -->
+<div class="scout" id="scout" aria-hidden="true">
+  <div class="scout-inner">
+    <p class="scout-kicker mono">A VILLAGE APPEARS ON THE MAP</p>
+    <h1 class="scout-title">THREE STARS</h1>
+    <p class="scout-sub">Divy Singhvi keeps a base. <b>Town Hall 15 · Level 189.</b> Almost maxed.</p>
+    <p class="scout-line">You are the attacker now. Deploy the army. Destroy the Town Hall for the third star.<br>The loot inside every building is the engineer himself.</p>
+    <div class="scout-cta" id="scoutCta"><span class="pulse"></span> TAP A TROOP · TAP THE GRASS TO DEPLOY</div>
+  </div>
+</div>
 
-      <div class="cloud cloud-left cloud-far" aria-hidden="true"></div>
-      <div class="cloud cloud-right cloud-far" aria-hidden="true"></div>
-      <div class="cloud cloud-left cloud-mid" aria-hidden="true"></div>
-      <div class="cloud cloud-right cloud-mid" aria-hidden="true"></div>
-      <div class="cloud cloud-left cloud-near" aria-hidden="true"></div>
-      <div class="cloud cloud-right cloud-near" aria-hidden="true"></div>
-      <div class="cloud cloud-center" aria-hidden="true"></div>
+<!-- ══════════════ BUILDING INFO PANEL (the portfolio, inside the mechanic) ══════════════ -->
+<aside class="info" id="info" aria-hidden="true">
+  <button class="info-close" id="infoClose" aria-label="Close">✕</button>
+  <div class="info-scroll" id="infoScroll"><!-- injected --></div>
+</aside>
 
-      <div class="raid-stamp" id="raidStamp" aria-hidden="true">RAID<br>BEGINS</div>
-
-      <div class="scroll-hint" id="scrollHint">
-        <span>SCROLL&nbsp;TO&nbsp;RAID</span>
-        <svg viewBox="0 0 24 36" class="hint-mouse"><rect x="2" y="2" width="20" height="32" rx="10" fill="none" stroke="currentColor" stroke-width="2.5"/><circle class="hint-wheel" cx="12" cy="11" r="3" fill="currentColor"/></svg>
-      </div>
+<!-- ══════════════ BATTLE RESULT ══════════════ -->
+<div class="result" id="result" aria-hidden="true">
+  <div class="result-card">
+    <div class="result-stars" id="resultStars"></div>
+    <div class="result-title" id="resultTitle">VILLAGE DESTROYED</div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="result-loot">
+      <div class="rl"><i class="dot dot-gold"></i><span class="mono" id="rGold">0</span></div>
+      <div class="rl"><i class="dot dot-elixir"></i><span class="mono" id="rElixir">0</span></div>
+      <div class="rl">🏆 <span class="mono" id="rTrophies">0</span></div>
+      <div class="rl">💥 <span class="mono" id="rDamage">0%</span></div>
     </div>
-  </section>
-
-  <!-- ══════ SCENE 2 · THE WALLS → ARMY CAMP ══════ -->
-  <section class="scene" id="walls" data-chapter="THE WALLS">
-    <div class="stage">
-      <div class="chapter-plate">
-        <p class="plate-no">CHAPTER I</p>
-        <h2 class="plate-title">BREACH THE WALLS</h2>
-        <p class="plate-sub">Every raid meets the wall first. This one is built from stacks, not stone.</p>
-      </div>
-      <div class="wall-grid" id="wallGrid" aria-hidden="true"></div>
-      <div class="troop-wrap">
-        <div class="troop-head">
-          <h3 class="troop-title">THE ARMY CAMP</h3>
-          <p class="troop-sub">Troops in rotation — levels earned in production, not practice mode.</p>
-        </div>
-        <div class="troop-track" id="troopTrack"><!-- cards injected by JS --></div>
-      </div>
+    <div class="result-actions">
+      <button class="r-btn r-primary" id="raidAgain">RAID AGAIN</button>
+      <button class="r-btn r-ally" id="resultAlly">REQUEST ALLIANCE</button>
     </div>
-  </section>
+    <p class="result-hint mono" id="resultHint"></p>
+  </div>
+</div>
 
-  <!-- ══════ SCENE 3 · THE DEFENSES ══════ -->
-  <section class="scene" id="defenses" data-chapter="THE DEFENSES">
-    <div class="stage">
-      <div class="chapter-plate">
-        <p class="plate-no">CHAPTER II</p>
-        <h2 class="plate-title">THE DEFENSES</h2>
-        <p class="plate-sub">Four towers. Each one built on a real payroll — or a real pull request.</p>
-      </div>
-      <div class="defense-col" id="defenseCol">
-
-        <article class="defense" data-tower="cannon">
-          <div class="defense-art"><svg viewBox="0 0 120 120"><use href="#sym-cannon"/></svg><span class="lvl-badge">LVL 5</span></div>
-          <div class="defense-info">
-            <p class="d-dates mono">MAY 2024 — JUL 2025 · HYBRID</p>
-            <h3 class="d-name">EF Polymer Ltd.</h3>
-            <p class="d-role">Software Engineering Intern · AgriTech, $70M+ valuation</p>
-            <ul>
-              <li>Built a Sales &amp; Warehouse Management System for agri supply chains</li>
-              <li>Inventory tracking, analytics dashboards, movement back-tracing</li>
-              <li><b>−40%</b> manual entries · <b>−20%</b> mis-products in production</li>
-            </ul>
-          </div>
-        </article>
-
-        <article class="defense" data-tower="archer">
-          <div class="defense-art"><svg viewBox="0 0 120 120"><use href="#sym-archer"/></svg><span class="lvl-badge">LVL 7</span></div>
-          <div class="defense-info">
-            <p class="d-dates mono">AUG 2025 — NOV 2025 · ON-SITE</p>
-            <h3 class="d-name">Euro Technologies</h3>
-            <p class="d-role">Golang Developer Intern</p>
-            <ul>
-              <li>Architected a full IAM platform in <b>Go, Gin &amp; Redis</b></li>
-              <li>OIDC/OAuth2 · WebAuthn · magic links · TOTP MFA</li>
-              <li>SSO for Slack, GitHub and LinkedIn</li>
-            </ul>
-          </div>
-        </article>
-
-        <article class="defense" data-tower="xbow">
-          <div class="defense-art"><svg viewBox="0 0 120 120"><use href="#sym-xbow"/></svg><span class="lvl-badge">LVL 8</span></div>
-          <div class="defense-info">
-            <p class="d-dates mono">MAR 2025 — PRESENT · OPEN SOURCE</p>
-            <h3 class="d-name">Kubernetes (CNCF)</h3>
-            <p class="d-role">Contributor — Minikube</p>
-            <ul>
-              <li>Fixed critical bugs: driver provisioning, binary generation, container networking</li>
-              <li>Hardened GitHub Actions CI — image tests fail less, builds break less</li>
-              <li>He doesn't just deploy Kubernetes. He patches it.</li>
-            </ul>
-          </div>
-        </article>
-
-        <article class="defense" data-tower="beacon">
-          <div class="defense-art"><svg viewBox="0 0 120 120"><use href="#sym-beacon"/></svg><span class="lvl-badge">LVL 9</span></div>
-          <div class="defense-info">
-            <p class="d-dates mono">DEC 2025 — PRESENT · REMOTE (SWEDEN)</p>
-            <h3 class="d-name">Gradr</h3>
-            <p class="d-role">Product Engineer <span class="d-note">(intern → full-time in 3 months)</span></p>
-            <ul>
-              <li>Full-stack features in SvelteKit, Svelte &amp; Prisma</li>
-              <li>Designed the observability stack: Grafana, Loki, Promtail, Sentry</li>
-              <li>Secure, performant APIs powering core product workflows</li>
-            </ul>
-          </div>
-        </article>
-
-      </div>
+<!-- ══════════════ WAR LOG ══════════════ -->
+<div class="warlog" id="warlog" aria-hidden="true">
+  <div class="warlog-card">
+    <div class="warlog-head">
+      <h3>WAR LOG</h3>
+      <button class="warlog-close" id="warlogClose">✕</button>
     </div>
-  </section>
-
-  <!-- ══════ SCENE 4 · THE STORAGES ══════ -->
-  <section class="scene" id="storages" data-chapter="THE STORAGES">
-    <div class="stage">
-      <div class="chapter-plate">
-        <p class="plate-no">CHAPTER III</p>
-        <h2 class="plate-title">RAID THE STORAGES</h2>
-        <p class="plate-sub">The loot was real all along.</p>
-      </div>
-
-      <div class="storage-row">
-        <article class="storage-card" id="storeGold">
-          <div class="storage-art">
-            <svg viewBox="0 0 120 120" class="store-svg"><use href="#sym-goldstore"/></svg>
-            <div class="crack-flash"></div>
-          </div>
-          <h3 class="s-name">Price Comparator <span class="s-kind">· Chrome Extension</span></h3>
-          <p class="s-stack mono">FASTAPI · SVELTE · POSTGRESQL</p>
-          <p class="s-desc">Real-time price comparison with scalable scraping, proxy rotation and intelligent caching. <b><span class="count" data-count="5000">0</span>+ active users</b> loot better prices with it every day.</p>
-        </article>
-
-        <article class="storage-card" id="storeElixir">
-          <div class="storage-art">
-            <svg viewBox="0 0 120 120" class="store-svg"><use href="#sym-elixirstore"/></svg>
-            <div class="crack-flash flash-elixir"></div>
-          </div>
-          <h3 class="s-name">Self-Healing Infrastructure <span class="s-kind">· Microservices</span></h3>
-          <p class="s-stack mono">DOCKER · KUBERNETES · DJANGO · PROMETHEUS · GRAFANA</p>
-          <p class="s-desc">A base that repairs itself — automatic recovery, monitoring and alerting for production workloads. Knock a service down; watch it stand back up.</p>
-        </article>
-      </div>
-
-      <div class="loot-strip" id="lootStrip">
-        <div class="loot-stat"><span class="loot-num mono"><span class="count" data-count="5000">0</span>+</span><span class="loot-label">extension users</span></div>
-        <div class="loot-stat"><span class="loot-num mono">#<span class="count" data-count="98">0</span></span><span class="loot-label">global · WorldQuant IQC</span></div>
-        <div class="loot-stat"><span class="loot-num mono">$<span class="count" data-count="1000">0</span></span><span class="loot-label">quant prize money</span></div>
-        <div class="loot-stat"><span class="loot-num mono"><span class="count" data-count="56">0</span></span><span class="loot-label">repositories</span></div>
-      </div>
+    <div class="warlog-body" id="warlogBody"><!-- injected --></div>
+    <div class="warlog-foot">
+      <div class="wl-stat"><span class="mono" id="wlRaids">0</span><label>RAIDS</label></div>
+      <div class="wl-stat"><span class="mono" id="wlStars">0</span><label>★ TOTAL</label></div>
+      <div class="wl-stat"><span class="mono" id="wlThree">0</span><label>3-STARS</label></div>
+      <div class="wl-stat"><span class="mono" id="wlGems">0</span><label>💎 GEMS</label></div>
+      <button class="wl-reset" id="wlReset">RESET VAULT</button>
     </div>
-  </section>
+  </div>
+</div>
 
-  <!-- ══════ SCENE 5 · THE TOWN HALL ══════ -->
-  <section class="scene" id="townhall" data-chapter="THE TOWN HALL">
-    <div class="stage">
-      <div class="chapter-plate">
-        <p class="plate-no">CHAPTER IV</p>
-        <h2 class="plate-title">THE TOWN HALL</h2>
-        <p class="plate-sub">At the center of every base: the builder himself.</p>
-      </div>
+<!-- ══════════════ REQUEST ALLIANCE (contact) ══════════════ -->
+<section class="alliance" id="alliance" aria-hidden="true">
+  <div class="alliance-inner">
+    <p class="al-kicker mono">REQUEST ALLIANCE</p>
+    <h2 class="al-title">The builder already has a clan.</h2>
+    <p class="al-sub">Happily shipping at Gradr — not looking for a new village. But open-source collabs, side quests, and genuinely hard problems? The gates are open. Replies faster than a rage-quit.</p>
+    <a class="al-cta" href="mailto:divysinghvi5@gmail.com">⚔&ensp;SEND RAID PLANS&ensp;→&ensp;divysinghvi5@gmail.com</a>
 
-      <div class="th-wrap" id="thWrap">
-        <svg viewBox="0 0 200 200" class="th-svg" id="thSvg"><use href="#sym-townhall"/></svg>
-        <div class="th-dust" id="thDust"></div>
-      </div>
-
-      <div class="th-about">
-        <p class="about-line">B.Tech, Electronics &amp; Communication — CTAE Udaipur, 2023–2027. Started contributing to Kubernetes before his third year. Went from intern to product engineer at a Swedish startup in one season.</p>
-        <div class="about-badges">
-          <span class="badge">🏆 WorldQuant IQC — 2nd Prize, #98 worldwide</span>
-          <span class="badge">🐙 Pull Shark ×2 · Pair Extraordinaire</span>
-          <span class="badge">⚙️ 56 repos and counting</span>
-          <span class="badge">🏰 The real base: TH15 · Level 189 · almost maxed</span>
-        </div>
-      </div>
-
-      <div class="destroy-stamp" id="destroyStamp" aria-hidden="true">
-        <div class="ds-stars">
-          <svg viewBox="0 0 60 58"><use href="#sym-star"/></svg>
-          <svg viewBox="0 0 60 58"><use href="#sym-star"/></svg>
-          <svg viewBox="0 0 60 58"><use href="#sym-star"/></svg>
-        </div>
-        <div class="ds-text">VILLAGE&nbsp;DESTROYED</div>
-      </div>
+    <div class="banner-row">
+      <a class="banner" href="https://github.com/divysinghvi" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" class="banner-icon" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
+        <span>GitHub</span>
+      </a>
+      <a class="banner" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" class="banner-icon" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0"/></svg>
+        <span>LinkedIn</span>
+      </a>
+      <a class="banner" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" class="banner-icon" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5zM8 12h8v2H8zm0 4h8v2H8z"/></svg>
+        <span>Resume</span>
+      </a>
     </div>
-  </section>
+  </div>
+  <footer class="footer">
+    <p>Built by Divy Singhvi — designed as one continuous raid, then made playable because a film you can only watch is a storyboard. No Supercell assets; this village is original fan-spirit art, drawn frame by frame on a canvas.</p>
+    <p class="footer-hint mono">P.S. real chiefs know the code: ↑ ↑ ↓ ↓ ← → ← → B A &ensp;·&ensp; type <b>hogrider</b>, <b>pekka</b>, <b>godmode</b>, <b>rage</b>, <b>freeze</b> &ensp;·&ensp; try <b>?auto</b> &ensp;·&ensp; triple-tap the Town Hall</p>
+  </footer>
+</section>
 
-  <!-- ══════ SCENE 6 · THE REBUILD ══════ -->
-  <section class="scene" id="rebuild" data-chapter="THE REBUILD">
-    <div class="stage rebuild-stage">
-      <div class="sun" aria-hidden="true"></div>
-      <div class="rebuild-copy">
-        <h2 class="rebuild-title">Every three-star is temporary.</h2>
-        <p class="rebuild-sub">He rebuilds. Faster, every time.</p>
-      </div>
-      <div class="village-rebuild" aria-hidden="true">
-        <svg viewBox="0 0 700 440" class="village-svg" id="rebuildVillage"><use href="#village-full"/></svg>
-        <svg viewBox="0 0 90 90" class="builder-sprite" id="builderSprite"><use href="#sym-builder"/></svg>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════ REQUEST ALLIANCE (after-film) ══════ -->
-  <section class="alliance" id="alliance" data-chapter="REQUEST ALLIANCE">
-    <div class="alliance-inner">
-      <p class="al-kicker">REQUEST ALLIANCE</p>
-      <h2 class="al-title">The builder already has a clan.</h2>
-      <p class="al-sub">Happily shipping at Gradr — not looking for a new village. But open-source collabs, side quests, and genuinely hard problems? The gates are open. Replies faster than a rage-quit.</p>
-      <a class="al-cta" href="mailto:divysinghvi5@gmail.com">⚔️&ensp;SEND RAID PLANS&ensp;→&ensp;divysinghvi5@gmail.com</a>
-
-      <div class="banner-row">
-        <a class="banner" href="https://github.com/divysinghvi" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" class="banner-icon"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>
-          <span>GitHub</span>
-        </a>
-        <a class="banner" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" class="banner-icon"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0"/></svg>
-          <span>LinkedIn</span>
-        </a>
-        <a class="banner" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" class="banner-icon"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5zM8 12h8v2H8zm0 4h8v2H8z"/></svg>
-          <span>Resume</span>
-        </a>
-      </div>
-    </div>
-
-    <footer class="footer">
-      <p>Built by Divy Singhvi — designed as one continuous raid. No Supercell assets were harmed; this village is original fan-spirit art.</p>
-      <p class="footer-hint mono">P.S. real chiefs know the code: ↑ ↑ ↓ ↓ ← → ← → B A&ensp;·&ensp;and try typing “hogrider”</p>
-    </footer>
-  </section>
-
-</main>
-
-<!-- toasts + egg layer -->
+<!-- ══════════════ OVERLAYS ══════════════ -->
 <div class="toast-zone" id="toastZone" aria-live="polite"></div>
-<div class="egg-layer" id="eggLayer" aria-hidden="true"></div>
 <div class="star-toast" id="starToast" aria-hidden="true"></div>
-
+<div class="egg-layer" id="eggLayer" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
+<div class="flash" id="flash" aria-hidden="true"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-<script src="app.js"></script>
+<!-- ══════════════ CINEMATIC APPROACH OVERLAY ══════════════ -->
+<div class="cinem-bars" id="cinemBars" aria-hidden="true"><i></i><i></i></div>
+<div class="cinem-cap" id="cinemCap" aria-hidden="true"></div>
+<button class="cinem-skip" id="cinemSkip" aria-label="Skip cinematic">SKIP&ensp;▸</button>
+
+<script src="game.js"></script>
 </body>
 </html>
