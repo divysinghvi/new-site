@@ -872,6 +872,20 @@ SPR.starBig = makeSprite(60, 58, (cx, w, h) => {
 });
 
 
+/* baked glow + moon — per-frame createRadialGradient was a real frame cost */
+SPR.glowWarm = makeSprite(64, 64, (cx) => {
+  const rg = cx.createRadialGradient(32, 32, 2, 32, 32, 30);
+  rg.addColorStop(0, "rgba(255,190,90,.95)"); rg.addColorStop(1, "rgba(255,140,50,0)");
+  cx.fillStyle = rg; cx.fillRect(0, 0, 64, 64);
+});
+SPR.moon = makeSprite(80, 80, (cx) => {
+  const mg = cx.createRadialGradient(40, 40, 2, 40, 40, 38);
+  mg.addColorStop(0, "#F2F6FF"); mg.addColorStop(0.7, "#C9D4EE"); mg.addColorStop(1, "rgba(201,212,238,0)");
+  cx.fillStyle = mg; cx.beginPath(); cx.arc(40, 40, 38, 0, TAU); cx.fill();
+  cx.fillStyle = "rgba(154,166,198,.35)";
+  [[30,32,6],[50,50,8],[48,26,4]].forEach(([x,y,r])=>{ cx.beginPath(); cx.arc(x,y,r,0,TAU); cx.fill(); });
+});
+
 /* ═════════════════════════════ WORLD STATE ═════════════════════════════ */
 const STATE = {
   phase: "boot",          // boot → scout → battle → result → alliance
@@ -1801,10 +1815,10 @@ function groundOriginScreen() {
 }
 
 /* ═════════════════════════════ CAMERA + RESIZE ═════════════════════════════ */
-let DPR = Math.min(window.devicePixelRatio || 1, 2);
+let DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 let VW = 0, VH = 0;
 function resize() {
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   VW = innerWidth; VH = innerHeight;
   canvas.width = Math.floor(VW * DPR); canvas.height = Math.floor(VH * DPR);
   canvas.style.width = VW + "px"; canvas.style.height = VH + "px";
@@ -1850,12 +1864,15 @@ function render() {
 
   // sky gradient shifts with time-of-day
   const tod = STATE.timeOfDay;
-  const skyTop = blend("#0B1430", "#1A1230", tod);
-  const skyMid = blend("#13204A", "#2A1840", tod);
-  const skyBot = blend("#1A2C3E", "#3A1E2E", tod);
-  const g = ctx.createLinearGradient(0, 0, 0, VH);
-  g.addColorStop(0, skyTop); g.addColorStop(0.5, skyMid); g.addColorStop(1, skyBot);
-  ctx.fillStyle = g; ctx.fillRect(0, 0, VW, VH);
+  const skyKey = Math.round(tod * 60) * 100000 + VH;
+  if (!render._sky || render._sky.key !== skyKey) {
+    const g = ctx.createLinearGradient(0, 0, 0, VH);
+    g.addColorStop(0, blend("#0B1430", "#1A1230", tod));
+    g.addColorStop(0.5, blend("#13204A", "#2A1840", tod));
+    g.addColorStop(1, blend("#1A2C3E", "#3A1E2E", tod));
+    render._sky = { key: skyKey, g };
+  }
+  ctx.fillStyle = render._sky.g; ctx.fillRect(0, 0, VW, VH);
 
   // night sky: stars + moon rise as the raid drags into dusk
   if (tod > 0.35) {
@@ -1869,10 +1886,8 @@ function render() {
     }
     ctx.globalAlpha = na;
     const mx = VW * 0.82, my = VH * 0.18 + (1 - na) * VH * 0.3;
-    const mg = ctx.createRadialGradient(mx, my, 2, mx, my, 34);
-    mg.addColorStop(0, "#F2F6FF"); mg.addColorStop(0.7, "#C9D4EE"); mg.addColorStop(1, "rgba(201,212,238,0)");
-    ctx.fillStyle = mg;
-    ctx.beginPath(); ctx.arc(mx, my, 32, 0, TAU); ctx.fill();
+    ctx.globalAlpha = na;
+    ctx.drawImage(SPR.moon, mx - 36, my - 36, 72, 72);
     ctx.restore();
   }
 
@@ -2014,13 +2029,7 @@ function drawBuilding(b) {
   if (b.type === "torch") {
     const flick = 0.5 + Math.sin(now() / 90 + b.cx * 7) * 0.18 + Math.sin(now() / 310 + b.cy) * 0.12;
     const gy2 = p.y - 64 * STATE.cam.z;
-    ctx.save();
-    ctx.globalAlpha = clamp(flick, 0.25, 0.95);
-    const rg2 = ctx.createRadialGradient(p.x, gy2, 1, p.x, gy2, 22 * STATE.cam.z);
-    rg2.addColorStop(0, "rgba(255,190,90,.9)"); rg2.addColorStop(1, "rgba(255,140,50,0)");
-    ctx.fillStyle = rg2;
-    ctx.beginPath(); ctx.arc(p.x, gy2, 22 * STATE.cam.z, 0, TAU); ctx.fill();
-    ctx.restore();
+    drawSprite(SPR.glowWarm, p.x, gy2, 0.5, 0.5, STATE.cam.z * 1.5, clamp(flick, 0.25, 0.95));
   }
   // night torches: warm flickering glow as the raid runs into dusk
   if (STATE.timeOfDay > 0.32 && !b.decor) {
@@ -2029,11 +2038,9 @@ function drawBuilding(b) {
     const flick = 0.65 + Math.sin(now() / 180 + b.cx * 3.1) * 0.35;
     ctx.globalAlpha = clamp((STATE.timeOfDay - 0.32) / 0.4, 0, 1) * flick;
     const gy = p.y - sz.h * STATE.cam.z * 0.72;
-    const rg = ctx.createRadialGradient(p.x, gy, 1, p.x, gy, 16 * STATE.cam.z);
-    rg.addColorStop(0, "rgba(255,176,74,.95)"); rg.addColorStop(1, "rgba(255,176,74,0)");
-    ctx.fillStyle = rg;
-    ctx.beginPath(); ctx.arc(p.x, gy, 16 * STATE.cam.z, 0, TAU); ctx.fill();
     ctx.restore();
+    drawSprite(SPR.glowWarm, p.x, gy, 0.5, 0.5, STATE.cam.z * 1.1,
+      clamp((STATE.timeOfDay - 0.32) / 0.4, 0, 1) * flick);
   }
   // beacon fire overlay
   if (b.type === "beacon" && b.beamRamp > 0.1) drawSprite(SPR.beaconFire, p.x, p.y, 0.5, 1, STATE.cam.z, 0.4 + b.beamRamp * 0.4);

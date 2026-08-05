@@ -265,20 +265,30 @@ svg{display:block}
 .tray-end:active{transform:translateY(3px);box-shadow:0 2px 0 #5C1610}
 
 /* ─────────── building info panel ─────────── */
+/* intel + profile live in centered cards, same language as result/war log — no drawers */
 .info{
-  position:fixed;top:0;right:0;bottom:0;width:min(420px,92vw);z-index:65;
-  background:linear-gradient(180deg,rgba(14,20,46,.97),rgba(8,13,31,.97));
-  border-left:4px solid #6B4A2B;box-shadow:inset 3px 0 0 rgba(255,222,122,.25),inset 0 0 60px rgba(0,0,0,.4),-16px 0 50px rgba(0,0,0,.5);
-  transform:translateX(105%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1);
-  box-shadow:-16px 0 50px rgba(0,0,0,.5);display:flex;flex-direction:column;
+  position:fixed;inset:0;z-index:65;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(5,9,20,.72);
+  opacity:0;pointer-events:none;transition:opacity .22s ease;
 }
-.info.on{transform:translateX(0)}
+.info.on{opacity:1;pointer-events:auto}
+.panel-card{
+  position:relative;width:min(520px,94vw);max-height:86vh;
+  display:flex;flex-direction:column;overflow:hidden;
+  background:linear-gradient(180deg,#171F45,#101736);
+  border:3px solid #6B4A2B;border-radius:20px;
+  box-shadow:inset 0 0 0 2px rgba(255,222,122,.22),0 24px 70px rgba(0,0,0,.6);
+  transform:scale(.94) translateY(10px);
+  transition:transform .22s cubic-bezier(.2,.9,.3,1.2);
+}
+.info.on .panel-card{transform:none}
 .info-close{
   position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;
   background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.15);font-size:15px;color:var(--text-dim);z-index:2;
 }
 .info-close:hover{background:rgba(255,77,94,.2);color:var(--danger)}
-.info-scroll{overflow-y:auto;padding:60px 26px 40px;scrollbar-width:thin;scrollbar-color:rgba(255,197,61,.3) transparent}
+.info-scroll{overflow-y:auto;padding:52px 26px 32px;scrollbar-width:thin;scrollbar-color:rgba(255,197,61,.3) transparent}
 .info-scroll::-webkit-scrollbar{width:6px}
 .info-scroll::-webkit-scrollbar-thumb{background:rgba(255,197,61,.3);border-radius:3px}
 .info-art{width:120px;height:120px;margin:0 auto 18px;display:block}
@@ -308,7 +318,8 @@ svg{display:block}
 }
 
 /* ─────────── full profile panel ─────────── */
-.profile{width:min(560px,96vw);z-index:82}
+.profile{z-index:82}
+.profile .panel-card{width:min(580px,96vw)}
 .p-head{text-align:center;margin-bottom:10px}
 .p-name{font-family:"Titan One";font-size:clamp(26px,3.4vw,36px);color:var(--gold);text-shadow:0 3px 0 var(--gold-deep),0 6px 0 rgba(0,0,0,.3)}
 .p-role{font-size:15px;font-weight:800;color:var(--text);margin-top:6px}
@@ -351,7 +362,7 @@ svg{display:block}
 .result{
   position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at center,rgba(8,13,31,.6),rgba(8,13,31,.92));
-  opacity:0;pointer-events:none;transition:opacity .4s ease;backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
 }
 .result.on{opacity:1;pointer-events:auto}
 .result-card{
@@ -380,7 +391,7 @@ svg{display:block}
 .result-hint{margin-top:18px;font-size:10.5px;color:var(--text-dim)}
 
 /* ─────────── war log ─────────── */
-.warlog{position:fixed;inset:0;z-index:78;display:flex;align-items:center;justify-content:center;background:rgba(8,13,31,.8);opacity:0;pointer-events:none;transition:opacity .3s ease;backdrop-filter:blur(3px)}
+.warlog{position:fixed;inset:0;z-index:78;display:flex;align-items:center;justify-content:center;background:rgba(8,13,31,.8);opacity:0;pointer-events:none;transition:opacity .25s ease}
 .warlog.on{opacity:1;pointer-events:auto}
 .warlog-card{width:min(520px,94vw);max-height:84vh;display:flex;flex-direction:column;background:linear-gradient(180deg,#171F45,#101736);border:3px solid #6B4A2B;border-radius:20px;overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,222,122,.22),0 24px 70px rgba(0,0,0,.6)}
 .warlog-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:2px solid #2A3560}
@@ -449,7 +460,6 @@ svg{display:block}
   .hud-loot{display:none}
   .hud-gems{display:none}
   .tray-army{min-width:74px}
-  .info{width:92vw}
 }
 @media (max-width:560px){
   .hud-phase{display:none}
