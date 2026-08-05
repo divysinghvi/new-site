@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Divy Singhvi — Product Engineer · Raid My Base</title>
 <meta name="description" content="Divy Singhvi — product engineer at Gradr, Kubernetes (Minikube) contributor, builder of a 5,000-user Chrome extension. His portfolio is a playable village: read the profile in one click, or raid the base and loot it.">
 <meta name="theme-color" content="#10173A">
@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@400;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=7">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 
@@ -25,7 +25,11 @@
 <div class="loader" id="loader" aria-hidden="true">
   <div class="loader-sky"></div>
   <div class="loader-sun"></div>
+  <div class="loader-cloud c1"></div>
+  <div class="loader-cloud c2"></div>
+  <div class="loader-cloud c3"></div>
   <div class="loader-ground"></div>
+  <div class="loader-pines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <svg class="loader-shield" viewBox="0 0 100 100" aria-hidden="true">
     <path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/>
     <text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text>
@@ -171,6 +175,7 @@
 
 <!-- ══════════════ REQUEST ALLIANCE (contact) ══════════════ -->
 <section class="alliance" id="alliance" aria-hidden="true">
+  <button class="al-close" id="allyClose" aria-label="Back to the village">✕</button>
   <div class="alliance-inner">
     <p class="al-kicker mono">REQUEST ALLIANCE</p>
     <h2 class="al-title">The builder already has a clan.</h2>
@@ -212,6 +217,6 @@
 <div class="cinem-cap" id="cinemCap" aria-hidden="true"></div>
 <button class="cinem-skip" id="cinemSkip" aria-label="Skip cinematic">SKIP&ensp;▸</button>
 
-<script src="game.js?v=14"></script>
+<script src="game.js?v=16"></script>
 </body>
 </html>

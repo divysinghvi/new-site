@@ -2251,6 +2251,7 @@ function buildingAt(gx, gy) {
 let pointerDownAt = null, didDrag = false;
 canvas.addEventListener("pointerdown", (e) => {
   Audio.resume();
+  if (STATE.phase === "cinem") { endCinematic(); return; }   // tap anywhere skips the intro
   if (STATE.phase !== "battle" && STATE.phase !== "scout" && STATE.phase !== "result") return;
   const { x, y } = pointerPos(e);
   pointerDownAt = { x, y, t: now() };
@@ -2472,42 +2473,63 @@ infoClose.addEventListener("click", () => infoEl.classList.remove("on"));
 
 /* ═════════════ FULL PROFILE — the entire résumé, zero gameplay required ═════════════ */
 function buildProfile() {
-  const job = (c) => `
+  const job = (c, icon) => `
     <div class="p-job">
-      <div class="p-job-head">
-        <div class="p-job-title">${c.title} <small>· ${c.role}</small></div>
-        <div class="p-job-date">${c.dates}</div>
+      <canvas class="p-bicon" data-b="${icon}" width="56" height="60"></canvas>
+      <div class="p-job-main">
+        <div class="p-job-head">
+          <div class="p-job-title">${c.title} <small>· ${c.role}</small></div>
+          <div class="p-job-date">${c.dates}</div>
+        </div>
+        <ul>${(c.list || []).map(li => `<li>${li}</li>`).join("")}</ul>
       </div>
-      <ul>${(c.list || []).map(li => `<li>${li}</li>`).join("")}</ul>
     </div>`;
   const skills = TROOP_DEFS.map(t => `
     <span class="p-skill"><i style="background:${t.color}"></i>${t.skill}<small>LVL ${t.lvl}</small></span>`).join("");
   profileScroll.innerHTML = `
-    <div class="p-head">
-      <div class="p-name">DIVY SINGHVI</div>
-      <div class="p-role">Product Engineer <b>@ Gradr</b> · Kubernetes Contributor</div>
-      <div class="p-meta">B.TECH ECE · CTAE UDAIPUR · 2023–2027</div>
-      <div class="p-links">
-        <a class="p-link gold" href="mailto:divysinghvi5@gmail.com"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6.5L21 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>EMAIL</a>
-        <a class="p-link" href="https://github.com/divysinghvi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>GITHUB</a>
-        <a class="p-link" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0"/></svg>LINKEDIN</a>
-        <a class="p-link" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5zM8 12h8v2H8zm0 4h8v2H8z"/></svg>RESUME</a>
+    <div class="p-plate">
+      <div class="p-plate-shield"><svg viewBox="0 0 100 100" width="46" height="46"><path d="M50 4 92 18v34c0 26-20 38-42 44C28 90 8 78 8 52V18Z" fill="#10173A" stroke="#FFC53D" stroke-width="6"/><text x="50" y="63" font-size="36" font-weight="900" fill="#FFC53D" text-anchor="middle" font-family="Titan One, sans-serif">DS</text></svg></div>
+      <div class="p-plate-main">
+        <div class="p-name">DIVY SINGHVI</div>
+        <div class="p-role">Product Engineer <b>@ Gradr</b> · Kubernetes Contributor</div>
+        <div class="p-meta">B.TECH ECE · CTAE UDAIPUR · 2023–2027</div>
       </div>
+      <div class="p-badge">TH15<small>LVL 189</small></div>
+    </div>
+    <div class="p-links">
+      <a class="p-link gold" href="mailto:divysinghvi5@gmail.com"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6.5L21 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>EMAIL</a>
+      <a class="p-link" href="https://github.com/divysinghvi" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></svg>GITHUB</a>
+      <a class="p-link" href="https://www.linkedin.com/in/divysinghvi/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13M7.12 20.45H3.55V9h3.57zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0"/></svg>LINKEDIN</a>
+      <a class="p-link" href="https://divysinghvi.vercel.app" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zm4 18H6V4h7v5h5zM8 12h8v2H8zm0 4h8v2H8z"/></svg>RESUME</a>
+    </div>
+    <div class="p-tiles">
+      <div class="p-tile"><span>5,000+</span><label>extension users</label></div>
+      <div class="p-tile"><span>#98</span><label>WorldQuant IQC</label></div>
+      <div class="p-tile"><span>56</span><label>repositories</label></div>
+      <div class="p-tile"><span>2</span><label>Pull Shark</label></div>
     </div>
     <div class="p-sect">EXPERIENCE</div>
-    ${job(CONTENT.beacon)}
-    ${job(CONTENT.xbow)}
-    ${job(CONTENT.archer)}
-    ${job(CONTENT.cannon)}
+    ${job(CONTENT.beacon, "beacon")}
+    ${job(CONTENT.xbow, "xbow")}
+    ${job(CONTENT.archer, "archer")}
+    ${job(CONTENT.cannon, "cannon")}
     <div class="p-sect">PROJECTS</div>
-    ${job(CONTENT.gold)}
-    ${job(CONTENT.elixir)}
-    <div class="p-sect">ACHIEVEMENTS</div>
-    <div class="p-job"><ul>${CONTENT.th.list.map(li => `<li>${li}</li>`).join("")}</ul></div>
+    ${job(CONTENT.gold, "gold")}
+    ${job(CONTENT.elixir, "elixir")}
     <div class="p-sect">SKILLS — THE ARMY</div>
     <div class="p-skills">${skills}</div>
     <div class="p-note">Happily shipping at Gradr — not job-hunting. For open source and genuinely hard problems, the gates are open.</div>
   `;
+  /* the buildings ARE the jobs — draw each entry's building beside it */
+  $$(".p-bicon", profileScroll).forEach(c => {
+    const spr = SPR[c.dataset.b];
+    if (!spr) return;
+    const ax = c.getContext("2d");
+    const sz = spriteSize(spr);
+    const k = Math.min(52 / sz.w, 56 / sz.h);
+    ax.clearRect(0, 0, 56, 60);
+    ax.drawImage(spr, 28 - sz.w * k / 2, 58 - sz.h * k, sz.w * k, sz.h * k);
+  });
 }
 function openProfile() {
   if (!profileScroll.querySelector(".p-head")) buildProfile();
@@ -2615,6 +2637,7 @@ function openAlliance() {
   allyEl.classList.add("on"); allyEl.setAttribute("aria-hidden", "false");
 }
 allyBtn.addEventListener("click", () => { allyEl.classList.contains("on") ? allyEl.classList.remove("on") : openAlliance(); });
+$("#allyClose").addEventListener("click", () => allyEl.classList.remove("on"));
 endBtn.addEventListener("click", () => { if (STATE.phase === "battle") endBattle("manual"); });
 
 /* ═════════════════════════════ WAR LOG + PERSISTENCE ═════════════════════════════ */
@@ -2693,12 +2716,12 @@ function autoPos(side, i) {
 let last = 0, fps = 60, fpsT = 0, fpsC = 0;
 function loop(t) {
   if (!last) last = t;
-  let dt = (t - last) / 1000; last = t;
-  dt = Math.min(dt, 0.05);
+  const rawDt = (t - last) / 1000; last = t;
+  let dt = Math.min(rawDt, 0.05);
   // fps
   fpsC++; fpsT += dt; if (fpsT >= 0.5) { fps = fpsC / fpsT; fpsT = 0; fpsC = 0; }
 
-  if (STATE.phase === "cinem") updateCinematic(dt);
+  if (STATE.phase === "cinem") updateCinematic(Math.min(rawDt, 0.25));   // real-time even at low fps
   else if (STATE.phase === "battle" || STATE.phase === "scout" || STATE.phase === "rebuild") update(dt);
   render();
   requestAnimationFrame(loop);
@@ -2772,6 +2795,7 @@ const CINEM_KEYFRAMES = [
 ];
 function startCinematic() {
   STATE.phase = "cinem";
+  STATE.cinem.dur = Math.min(innerWidth, innerHeight) < 700 ? 4.6 : 7;
   fitCamera();
   const fit = { ox: STATE.cam.ox, oy: STATE.cam.oy, z: STATE.cam.z };
   STATE.cinem.kf = CINEM_KEYFRAMES.map(k => ({
@@ -2870,7 +2894,7 @@ function boot() {
   loaderTip.textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
   let pct = 0;
   const tick = () => {
-    pct = Math.min(100, pct + rand(8, 22));
+    pct = Math.min(100, pct + rand(16, 34));
     loaderBar.style.width = pct + "%"; loaderPct.textContent = Math.round(pct) + "%";
     if (pct >= 100) {
       setTimeout(() => {
@@ -2879,7 +2903,7 @@ function boot() {
         setTimeout(() => loader.remove(), 500);
         if (AUTO || REDUCED) startScout(); else startCinematic();
       }, 250);
-    } else setTimeout(tick, 120);
+    } else setTimeout(tick, 90);
   };
   setTimeout(tick, 200);
 
