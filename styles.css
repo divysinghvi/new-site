@@ -484,3 +484,127 @@ svg{display:block}
 .rl{align-items:center}
 .rl svg{display:block}
 .wl-loot .dot{width:8px;height:8px;margin-right:3px;display:inline-block;vertical-align:baseline}
+
+/* ═══════════════════════════════════════════════════════════════
+   DAY THEME — the world is a bright meadow, the UI is carved wood.
+   This layer overrides the night-navy skin wholesale.
+   ═══════════════════════════════════════════════════════════════ */
+#world{background:#79A837;cursor:default}
+.vignette{background:radial-gradient(ellipse at center,transparent 60%,rgba(24,40,10,.4) 100%)}
+.grain{opacity:.04}
+
+/* HUD: dark wood strip, CoC resource pills */
+.hud{background:linear-gradient(180deg,rgba(46,32,18,.92),rgba(46,32,18,0))}
+.hud-loot{
+  background:rgba(30,20,10,.78);border:2px solid rgba(20,12,6,.9);border-radius:99px;
+  padding:3px 10px 3px 8px;color:#FFE9A8;
+}
+.hud-gems{background:rgba(30,20,10,.78);border:2px solid rgba(20,12,6,.9);border-radius:99px;padding:3px 10px;color:#9BE8B0}
+.hud-damage{background:rgba(30,20,10,.78);border:2px solid rgba(20,12,6,.9);border-radius:99px;padding:3px 10px;min-width:0}
+.hud-btn{background:linear-gradient(180deg,#7A5A3B,#4E3520);border:2px solid #33241A;color:#EFE0C4}
+.hud-btn:hover{background:linear-gradient(180deg,#8A6845,#5A4128);color:#FFE9A8;border-color:#33241A}
+.hud-phase{color:#FFE9A8}
+
+/* panels: wood frame, cream interior, ink text — like every dialog back home */
+.info{background:rgba(28,20,10,.62)}
+.panel-card{
+  background:linear-gradient(180deg,#8A6845,#5E4229);
+  border:3px solid #33241A;border-radius:18px;
+  box-shadow:inset 0 0 0 2px rgba(255,230,170,.28),0 24px 70px rgba(20,12,4,.55);
+}
+.info-scroll{
+  background:linear-gradient(180deg,#F7F0DE,#EDE1C6);
+  color:#3A2C1C;margin:52px 12px 12px;border-radius:12px;
+  border:2px solid rgba(90,64,38,.35);
+  padding:26px 24px 30px;
+}
+.info-close{
+  top:10px;right:12px;width:36px;height:34px;border-radius:9px;
+  background:linear-gradient(180deg,#E85B4B,#B02A1E);border:2.5px solid #6E1610;
+  color:#fff;font-weight:900;box-shadow:0 3px 0 #6E1610;
+}
+.info-close:hover{background:linear-gradient(180deg,#F06A57,#C43A2A);color:#fff}
+.info-title{color:#3A2C1C}
+.info-role{color:#8A3FC0}
+.info-dates{color:#A0722B}
+.info-stack{color:#8A6A2E}
+.info-desc{color:#5A4A38}
+.info-desc b,.info-list b{color:#2E2418}
+.info-list li{color:#54443A}
+.info-lvl{box-shadow:0 3px 0 #16306B}
+.info-hp{color:#6B5B48}
+.info-hp b{color:#B02A1E}
+.info-looted{background:linear-gradient(180deg,rgba(200,150,30,.25),rgba(200,150,30,.1));border-color:rgba(154,106,14,.55);color:#7A5000}
+
+/* full profile on cream */
+.p-name{color:#C98F1B;text-shadow:0 2px 0 rgba(122,80,0,.35)}
+.p-role{color:#3A2C1C}
+.p-role b{color:#A0722B}
+.p-meta{color:#8A7A62}
+.p-sect{color:#8A5A17;border-bottom-color:rgba(122,80,0,.3)}
+.p-job{border-bottom-color:rgba(90,64,38,.18)}
+.p-job-title{color:#2E2418}
+.p-job-title small{color:#8A3FC0}
+.p-job-date{color:#A0722B}
+.p-job li{color:#54443A}
+.p-job li::before{color:#C98F1B}
+.p-skill{background:rgba(122,80,0,.08);border-color:rgba(122,80,0,.3);color:#3A2C1C}
+.p-skill small{color:#A0722B}
+.p-note{background:linear-gradient(180deg,rgba(200,150,30,.22),rgba(200,150,30,.08));border-color:rgba(154,106,14,.5);color:#6E4A00}
+
+/* result + war log on wood/cream */
+.result{background:rgba(28,20,10,.66)}
+.result-card{
+  background:linear-gradient(180deg,#8A6845,#5E4229);
+  border:3px solid #33241A;
+  box-shadow:inset 0 0 0 2px rgba(255,230,170,.28),0 24px 70px rgba(20,12,4,.55);
+}
+.result-sub{color:#EFE0C4}
+.result-loot{color:#FFE9A8}
+.result-loot .rl{background:rgba(30,20,10,.5);border:2px solid rgba(20,12,6,.6)}
+.result-hint{color:#C9B48E}
+.warlog{background:rgba(28,20,10,.66)}
+.warlog-card{
+  background:linear-gradient(180deg,#8A6845,#5E4229);
+  border:3px solid #33241A;
+  box-shadow:inset 0 0 0 2px rgba(255,230,170,.28),0 24px 70px rgba(20,12,4,.55);
+}
+.warlog-head{border-bottom:2px solid rgba(30,20,10,.5)}
+.warlog-head h3{color:#FFE9A8}
+.warlog-close{background:linear-gradient(180deg,#E85B4B,#B02A1E);border:2px solid #6E1610;color:#fff}
+.warlog-body{background:linear-gradient(180deg,#F7F0DE,#EDE1C6);margin:0 12px;border-radius:10px}
+.wl-row{border-bottom-color:rgba(90,64,38,.18)}
+.wl-title{color:#2E2418}
+.wl-sub{color:#8A7A62}
+.wl-loot{color:#8A5A17}
+.wl-empty{color:#6B5B48}
+.warlog-foot{border-top:2px solid rgba(30,20,10,.5)}
+.wl-stat span{color:#FFE9A8}
+.wl-stat label{color:#C9B48E}
+
+/* troop tray: wood cards */
+.tray{background:linear-gradient(0deg,rgba(46,32,18,.9),rgba(46,32,18,0));padding-top:16px}
+.troop-btn{background:linear-gradient(180deg,#4E3823,#332216);border:2.5px solid #6B4E33}
+.troop-btn.selected{border-color:#FFD764;box-shadow:0 0 16px rgba(255,215,100,.45),0 6px 14px rgba(20,12,4,.5)}
+.troop-name{color:#EFE0C4}
+.tray-label{color:#C9B48E}
+.tray-label span{color:#FFE9A8}
+.tray-bar{background:rgba(20,12,6,.7)}
+
+/* scout + toasts */
+.scout{background:radial-gradient(ellipse at center,rgba(28,20,10,.38),rgba(28,20,10,.72))}
+.scout-kicker{color:#E8D9B8}
+.scout-line{color:#EFE0C4}
+.scout-line b{color:#fff}
+.scout-sub{color:#EFE0C4}
+.scout-role{color:#F7F0DE}
+.chip{background:rgba(30,20,10,.6);border-color:rgba(255,215,100,.5);color:#F7F0DE}
+.chip svg{color:#FFD764}
+.scout-sublinks{color:#C9B48E}
+.scout-sublinks a{color:#FFD764}
+.egg-yell{-webkit-text-stroke:2.5px #4A1A00}
+.cinem-cap{text-shadow:0 2px 14px rgba(20,12,4,.9),0 0 36px rgba(255,197,61,.45)}
+.p-job li b,.info-scroll b{color:#2E2418}
+.info-scroll .info-looted b{color:#7A5000}
+.p-job li b,.info-scroll b{color:#2E2418}
+.info-scroll .info-looted b{color:#7A5000}

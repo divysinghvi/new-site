@@ -1138,11 +1138,11 @@ function deployTroop(def, gx, gy, secret = false) {
   if (!def) return false;
   const key = def.key;
   if (!secret) {
-    if (STATE.countdown[key] <= 0) { addToast("⚠️", "No " + def.name + "s left"); return false; }
+    if (STATE.countdown[key] <= 0) { if (!AUTO) addToast("⚠️", "No " + def.name + "s left"); return false; }
     if (STATE.housingUsed + def.housing > STATE.housingCap) { addToast("⚠️", "Army camp full"); return false; }
   }
   const ix = Math.round(gx), iy = Math.round(gy);
-  if (!inBounds(ix, iy) || OCC[ix][iy]) { addToast("⚠️", "Can't deploy on a building"); return false; }
+  if (!inBounds(ix, iy) || OCC[ix][iy]) { if (!AUTO) addToast("⚠️", "Can't deploy on a building"); return false; }
   // spawn slightly randomized
   const t = {
     def, key, gx: gx + rand(-0.3, 0.3), gy: gy + rand(-0.3, 0.3),
@@ -1715,7 +1715,7 @@ function buildGround() {
   gx.scale(DPR, DPR);
   gx.lineJoin = "round"; gx.lineCap = "round";
   // base grass field color
-  gx.fillStyle = "#2A5233"; gx.fillRect(0, 0, gw, gh);
+  gx.fillStyle = "#79A837"; gx.fillRect(0, 0, gw, gh);
   const ox = gw / 2, oy = 30;      // screen origin of grid (0,0)
   const at = (x, y) => ({ x: ox + (x - y) * TW2, y: oy + (x + y) * TH2 });
 
@@ -1726,11 +1726,11 @@ function buildGround() {
       const p = at(x, y);
       const out = x < 0 || y < 0 || x >= GRID || y >= GRID;
       const tone = (x + y) & 1;
-      const base = out ? [42, 74, 50] : tone ? [63, 122, 76] : [52, 98, 66];
-      const j = out ? 3 : 7;
+      const base = out ? [121, 168, 55] : tone ? [149, 202, 76] : [138, 191, 66];
+      const j = out ? 3 : 5;
       const r = Math.round(base[0] + srng(-j, j)), g = Math.round(base[1] + srng(-j, j)), b = Math.round(base[2] + srng(-j, j));
       gx.fillStyle = `rgb(${r},${g},${b})`;
-      gx.strokeStyle = out ? "rgba(24,46,30,.7)" : "rgba(31,61,39,.75)";
+      gx.strokeStyle = out ? "rgba(96,138,44,.4)" : "rgba(101,148,47,.55)";
       gx.lineWidth = 1.4;
       gx.beginPath();
       gx.moveTo(p.x, p.y - TH2 + 1); gx.lineTo(p.x + TW2 - 1, p.y); gx.lineTo(p.x, p.y + TH2 - 1); gx.lineTo(p.x - TW2 + 1, p.y);
@@ -1764,7 +1764,7 @@ function buildGround() {
     const x = srng(LO + .5, HI - .5), y = srng(LO + .5, HI - .5);
     if (insideRing(x, y)) continue;
     const p = at(x, y);
-    gx.strokeStyle = srand() < .5 ? "rgba(84,150,98,.8)" : "rgba(38,74,48,.8)";
+    gx.strokeStyle = srand() < .5 ? "rgba(178,220,105,.9)" : "rgba(88,140,40,.85)";
     gx.lineWidth = 1.3;
     const h = srng(3, 6);
     gx.beginPath(); gx.moveTo(p.x, p.y); gx.lineTo(p.x - 1.5, p.y - h); gx.moveTo(p.x + 2, p.y); gx.lineTo(p.x + 3, p.y - h * .8); gx.stroke();
@@ -1794,17 +1794,46 @@ function buildGround() {
     const p = at(x, y);
     const r = srng(6, 10);
     gx.fillStyle = "rgba(0,0,0,.2)"; gx.beginPath(); gx.ellipse(p.x, p.y + r * .5, r * 1.2, r * .4, 0, 0, TAU); gx.fill();
-    gx.fillStyle = "#2F6039"; gx.strokeStyle = "#1F3D27"; gx.lineWidth = 2;
+    gx.fillStyle = "#4C9040"; gx.strokeStyle = "#2E6B2C"; gx.lineWidth = 2;
     gx.beginPath(); gx.arc(p.x - r * .5, p.y, r * .7, 0, TAU); gx.fill(); gx.stroke();
     gx.beginPath(); gx.arc(p.x + r * .45, p.y - r * .1, r * .62, 0, TAU); gx.fill(); gx.stroke();
-    gx.fillStyle = "#3C7548"; gx.beginPath(); gx.arc(p.x - r * .1, p.y - r * .38, r * .58, 0, TAU); gx.fill(); gx.stroke();
+    gx.fillStyle = "#5CA84E"; gx.beginPath(); gx.arc(p.x - r * .1, p.y - r * .38, r * .58, 0, TAU); gx.fill(); gx.stroke();
     gx.fillStyle = "rgba(255,255,255,.12)"; gx.beginPath(); gx.arc(p.x - r * .25, p.y - r * .5, r * .28, 0, TAU); gx.fill();
   }
 
   // soft edge shading so the island doesn't end in a hard line
-  const edgeG = gx.createRadialGradient(ox, oy + span * TH2, span * TW2 * .52, ox, oy + span * TH2, span * TW2 * 1.02);
-  edgeG.addColorStop(0, "rgba(10,18,26,0)"); edgeG.addColorStop(1, "rgba(10,18,26,.5)");
+  const edgeG = gx.createRadialGradient(ox, oy + span * TH2, span * TW2 * .55, ox, oy + span * TH2, span * TW2 * 1.05);
+  edgeG.addColorStop(0, "rgba(40,70,18,0)"); edgeG.addColorStop(1, "rgba(40,70,18,.35)");
   gx.fillStyle = edgeG; gx.fillRect(0, 0, gw, gh);
+
+  // the forest — dense pines ringing the meadow, like the map edge back home
+  _seed = 777001;
+  const pines = [];
+  for (let i = 0; i < 260; i++) {
+    const x = srng(LO + .2, HI - .2), y = srng(LO + .2, HI - .2);
+    const out2 = x < -0.6 || y < -0.6 || x >= GRID + 0.6 || y >= GRID + 0.6;
+    if (!out2) continue;
+    if (x > 9.5 && x < 15 && y > GRID) continue;      // keep the path mouth clear
+    // density falls toward the field: keep rim trees, thin the inner apron
+    const edgeDist = Math.min(x - LO, y - LO, HI - x, HI - y);
+    if (edgeDist > 1.8 && srand() < 0.62) continue;
+    pines.push({ x, y, s: srng(.6, 1.15), tone: srand() < .5 });
+  }
+  pines.sort((a, b) => (a.x + a.y) - (b.x + b.y));
+  for (const t of pines) {
+    const p = at(t.x, t.y), s2 = t.s;
+    gx.fillStyle = "rgba(0,0,0,.18)";
+    gx.beginPath(); gx.ellipse(p.x, p.y + 2, 14 * s2, 5 * s2, 0, 0, TAU); gx.fill();
+    gx.fillStyle = "#5E3D20"; gx.fillRect(p.x - 3 * s2, p.y - 10 * s2, 6 * s2, 10 * s2);
+    const g1 = t.tone ? "#3E8A3B" : "#347A34", g2 = t.tone ? "#4C9C48" : "#3E8A3B";
+    gx.strokeStyle = "#275A26"; gx.lineWidth = 2;
+    gx.fillStyle = g1;
+    gx.beginPath(); gx.moveTo(p.x, p.y - 46 * s2); gx.lineTo(p.x + 15 * s2, p.y - 18 * s2); gx.lineTo(p.x - 15 * s2, p.y - 18 * s2); gx.closePath(); gx.fill(); gx.stroke();
+    gx.fillStyle = g2;
+    gx.beginPath(); gx.moveTo(p.x, p.y - 32 * s2); gx.lineTo(p.x + 19 * s2, p.y - 6 * s2); gx.lineTo(p.x - 19 * s2, p.y - 6 * s2); gx.closePath(); gx.fill(); gx.stroke();
+    gx.fillStyle = "rgba(255,255,255,.10)";
+    gx.beginPath(); gx.moveTo(p.x - 2 * s2, p.y - 40 * s2); gx.lineTo(p.x + 8 * s2, p.y - 22 * s2); gx.lineTo(p.x - 8 * s2, p.y - 22 * s2); gx.closePath(); gx.fill();
+  }
 
   groundW = gw; groundH = gh;
 }
@@ -1863,33 +1892,9 @@ function render() {
   ctx.clearRect(0, 0, VW, VH);
 
   // sky gradient shifts with time-of-day
-  const tod = STATE.timeOfDay;
-  const skyKey = Math.round(tod * 60) * 100000 + VH;
-  if (!render._sky || render._sky.key !== skyKey) {
-    const g = ctx.createLinearGradient(0, 0, 0, VH);
-    g.addColorStop(0, blend("#0B1430", "#1A1230", tod));
-    g.addColorStop(0.5, blend("#13204A", "#2A1840", tod));
-    g.addColorStop(1, blend("#1A2C3E", "#3A1E2E", tod));
-    render._sky = { key: skyKey, g };
-  }
-  ctx.fillStyle = render._sky.g; ctx.fillRect(0, 0, VW, VH);
-
-  // night sky: stars + moon rise as the raid drags into dusk
-  if (tod > 0.35) {
-    const na = clamp((tod - 0.35) / 0.35, 0, 1);
-    ctx.save();
-    for (const s of STARS) {
-      const tw = 0.5 + 0.5 * Math.sin(now() / 600 + s.tw);
-      ctx.globalAlpha = na * tw * 0.9;
-      ctx.fillStyle = "#E8EFFA";
-      ctx.beginPath(); ctx.arc(s.fx * VW, s.fy * VH, s.r, 0, TAU); ctx.fill();
-    }
-    ctx.globalAlpha = na;
-    const mx = VW * 0.82, my = VH * 0.18 + (1 - na) * VH * 0.3;
-    ctx.globalAlpha = na;
-    ctx.drawImage(SPR.moon, mx - 36, my - 36, 72, 72);
-    ctx.restore();
-  }
+  /* daylight, edge to edge — the camera never leaves the meadow */
+  ctx.fillStyle = "#79A837";
+  ctx.fillRect(0, 0, VW, VH);
 
   ctx.save();
   /* iso() already carries cam.ox/oy — translate by shake ONLY, or everything doubles the offset.
@@ -2031,8 +2036,8 @@ function drawBuilding(b) {
     const gy2 = p.y - 64 * STATE.cam.z;
     drawSprite(SPR.glowWarm, p.x, gy2, 0.5, 0.5, STATE.cam.z * 1.5, clamp(flick, 0.25, 0.95));
   }
-  // night torches: warm flickering glow as the raid runs into dusk
-  if (STATE.timeOfDay > 0.32 && !b.decor) {
+  // (daylight world — no dusk glow pass)
+  if (false && !b.decor) {
     const sz = spriteSize(spr);
     ctx.save();
     const flick = 0.65 + Math.sin(now() / 180 + b.cx * 3.1) * 0.35;
@@ -2679,7 +2684,7 @@ function autoPos(side, i) {
   const spread = () => ({ gx: rand(1, GRID - 1), gy: rand(1, GRID - 1) });
   if (side === "spread") { let p; for (let k=0;k<30;k++){p=spread();const ix=Math.round(p.gx),iy=Math.round(p.gy);if(inBounds(ix,iy)&&DEPLOY_OK[ix][iy])return p;} return spread(); }
   // edge deploy just OUTSIDE the wall ring (walls sit at 6..16)
-  const edges = { tl: [4.5, 4.5], tr: [17.5, 4.5], bl: [4.5, 17.5], br: [17.5, 17.5] };
+  const edges = { tl: [3.4, 3.4], tr: [18.6, 3.4], bl: [3.4, 18.6], br: [18.6, 18.6] };
   const e = edges[side] || edges.tl;
   return { gx: e[0] + rand(-1, 1), gy: e[1] + rand(-1, 1) };
 }
